@@ -1,0 +1,11 @@
+Hello {{ name }}!
+
+
+{%- if has_prev -%} 
+  <a href="{{ prev }}" >Prev</a>
+{%- endif -%}
+
+{%- if has_next -%} 
+  <a href="{{ next }}" >Next</a>
+{%- endif -%}
+
