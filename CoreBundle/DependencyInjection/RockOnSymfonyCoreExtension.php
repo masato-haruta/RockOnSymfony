@@ -23,26 +23,32 @@ class RockOnSymfonyCoreExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        //$loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        //$loader->load('services.xml');
 
+		$dir = $config['directory'];
+		$container->setParameter('rock.core.dir', $dir);
 
-		foreach($configs as $sub)
-			$config = array_merge($config, $sub);
+        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.xml');
 
+		
+		$container->compile();	
 		// Autoload Rock\Components
-		if(array_key_exists('directory', $config))
-			$dir = $config['directory'];
-		if($dir)
-		    $this->registRockComponents($dir);
-		else
-			throw new \Exception('Rock Components directory is not specified. Plz config "rock_on_symfony_core:directory" on your config.yml.');
+		$this->registRockComponents($container);
     }
 
-	protected function registRockComponents($rockBaseDir)
+	protected function registRockComponents(ContainerBuilder $container)
 	{
-		$loader = new UniversalClassLoader();
-		$loader->registerNamespace('Rock\\Components', $rockBaseDir);
+		$loaderFile  = $container->getParameter('rock.packages.loader.location');
+		if(!file_exists($loaderFile))
+		{
+			throw new \Exception(sprintf('File "%s" is not exist or unreadable.', $loaderFile));
+		}
+		require_once($loaderFile);
+
+		$loader  = new \Rock\Components\Core\Loader\PackageLoader();
+
+		$loader->setNamespacePrefix('Rock\\Components');
+		$loader->loadPackageFile($container->getParameter('rock.packages.defaults'));
 
 		$loader->register();
 	}

@@ -13,7 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Rock\OnSymfony\HttpPageFlowBundle\Configuration\Flow;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IFlowEvent;
 
-class DefaultController extends Controller
+class DemoController extends Controller
 {
     /**
      * @Route("/", name="rock_demo_default")

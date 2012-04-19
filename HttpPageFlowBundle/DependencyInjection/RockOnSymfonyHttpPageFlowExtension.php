@@ -1,6 +1,6 @@
 <?php
 
-namespace Rock\OnSymfony\WebPageFlowBundle\DependencyInjection;
+namespace Rock\OnSymfony\HttpPageFlowBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
-class RockOnSymfonyWebPageFlowExtension extends Extension
+class RockOnSymfonyHttpPageFlowExtension extends Extension
 {
     /**
      * {@inheritDoc}
@@ -27,6 +27,6 @@ class RockOnSymfonyWebPageFlowExtension extends Extension
     }
 	public function getAlias()
 	{
-		return 'rock_on_symfony_web_page_flow';
+		return 'rock_on_symfony_http_page_flow';
 	}
 }
