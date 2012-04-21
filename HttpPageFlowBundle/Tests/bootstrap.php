@@ -16,6 +16,4 @@ $loader->register();
 //    }
 //});
 
-require_once __DIR__.'/../../../Components/Core/Loader/PackageLoader.php';
-$loader = new Rock\Components\Core\Loader\PackageLoader();
-$loader->loadPackageFile('.package');
+require_once __DIR__.'/../../../Components/autoload.php';

@@ -7,10 +7,10 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\Controller;
 use Rock\OnSymfony\HttpPageFlowBundle\Controller\FlowController as Controller;
 
 // <Use> : Annotation
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-// <Use> : Rock Flow 
 use Rock\OnSymfony\HttpPageFlowBundle\Configuration\Flow;
+use Rock\OnSymfony\HttpPageFlowBundle\Configuration\Route;
+use Rock\OnSymfony\HttpPageFlowBundle\Configuration\Template;
+// <Use> : Rock Flow 
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IFlowEvent;
 
 class DemoController extends Controller

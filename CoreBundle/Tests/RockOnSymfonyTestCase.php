@@ -13,17 +13,17 @@
  * $Copyrights$
  *
  ************************************************************************************/
+namespace Rock\OnSymfony\CoreBundle\Tests;
 
 // <Use> : PHPUnit Test
 use \PHPUnit_Framework_TestCase as TestCase;
 
-class RockTests extends TestCase
+class RockOnSymfonyTestCase extends TestCase
 {
 
-	public function testLoader()
+	protected function loadComponents()
 	{
-
-		$rockBaseDir  = __DIR__.'/../../../Components';
+		$rockBaseDir  = __DIR__.'/../../../Components/src';
 		$loaderFile   = $rockBaseDir.'/Core/Loader/PackageLoader.php';
 		if(!file_exists($loaderFile))
 		{

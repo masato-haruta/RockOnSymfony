@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
   <parameters>
     <!-- Not Supported Yet -->
-    <parameter key="rock.packages.loader.location">%rock.core.dir%/Core/Loader/PackageLoader.php</parameter>
+    <parameter key="rock.packages.loader.location">%rock.core.dir%/src/Core/Loader/PackageLoader.php</parameter>
     <parameter key="rock.packages.loader.class">Rock\Components\Core\Loader\PackageLoader</parameter>
 	<parameter key="rock.packages.prefix.default">Rock\Components</parameter>
     <parameter key="rock.packages.defaults">%rock.core.dir%/all.packages</parameter>
