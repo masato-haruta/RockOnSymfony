@@ -51,6 +51,10 @@ class RockOnSymfonyCoreExtension extends Extension
 		$loader->loadPackageFile($container->getParameter('rock.packages.defaults'));
 
 		$loader->register();
+
+
+		if(!class_exists('\\Rock\\Components\\Core\\Rock'))
+			throw new \Exception('Failed to regist');
 	}
 
 }

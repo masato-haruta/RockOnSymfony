@@ -5,25 +5,71 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
 	<parameters>
-		<parameter key="rock.page_flow.template_factory.class">Rock\Components\Flow\Factory\TemplateFactory</parameter>
-		<parameter key="rock.page_flow.builder.class">Rock\Components\HttpPageFlow\Builder\Builder</parameter>
+		<parameter key="rock.page_flow.factory.class">Rock\OnSymfony\HttpPageFlowBundle\Factory\FlowFactory</parameter>
+		<parameter key="rock.page_flow.builtin_types.class">Rock\OnSymfony\HttpPageFlowBundle\Type\BuiltinTypes</parameter>
 		<parameter key="rock.page_flow.manager.class">Rock\Components\Flow\Manager\FlowManager</parameter>
+		<parameter key="rock.page_flow.event_listener.class">Rock\OnSymfony\HttpPageFlowBundle\EventListener\ControllerListener</parameter>
+		<parameter key="rock.page_flow.session_manager.class">Rock\OnSymfony\HttpPageFlowBundle\Session\SessionManager</parameter>
+
+		<parameter key="rock.page_flow.event_dispatcher.class">Symfony\Component\EventDispatcher\EventDispatcher</parameter>
 	</parameters>
 
     <services>
         <!-- Flow Manager -->
-        <service id="rock.page_flow.manager" class="%rock.page_flow.manager.class%">
+        <service 
+			id="rock.page_flow.manager" 
+			class="%rock.page_flow.manager.class%"
+		>
 		    <tag name="rock.page_flow.manager" />
 		</service>
         <!-- Flow Template Factory -->
-        <service id="rock.page_flow.template_factory" class="%rock.page_flow.template_factory.class%">
-		    <tag name="rock.page_flow.template_factory" />
-		</service>
-        <!-- Flow Builder -->
-        <service id="rock.page_flow.builder" class="%rock.page_flow.builder.class%">
-			<argument type="service" id="rock.page_flow.template_factory"/>
-		    <tag name="rock.page_flow.builder" />
+        <service 
+			id="rock.page_flow.builtin_types" 
+			class="%rock.page_flow.builtin_types.class%"
+		>
+		    <tag name="rock.page_flow.type"/>
 		</service>
 
+		<!--  -->
+		<service 
+			id="rock.page_flow.session_manager" 
+			class="%rock.page_flow.session_manager.class%"
+		>
+			<argument type="service" id="session"/>	
+		</service>
+        <!-- Flow Builder -->
+		<service 
+			id="rock.page_flow.factory" 
+			class="%rock.page_flow.factory.class%"
+		>
+			<!--<argument type="service" id="rock.page_flow.session_manager"/>-->
+			<argument type="service" id="service_container"/>
+			<tag neme="rock.page_flow.factory"/>
+		</service>
+		
+		<!-- Kernel EventListener -->
+		<service 
+			id="rock.page_flow.event_listener" 
+			class="%rock.page_flow.event_listener.class%"
+		>
+		    <argument type="service" id="service_container"/>
+		    <tag 
+				name="kernel.event_listener" 
+				event="kernel.request" 
+				method="onKernelRequest"
+			/>
+		    <tag 
+				name="kernel.event_listener" 
+				event="kernel.controller" 
+				method="onKernelController"
+			/>
+		</service>
+		
+		<!-- -->
+		<service 
+			id="rock.page_flow.event_dispatcher" 
+			class="%rock.page_flow.event_dispatcher.class%"
+		>
+		</service>
 	</services>
 </container>

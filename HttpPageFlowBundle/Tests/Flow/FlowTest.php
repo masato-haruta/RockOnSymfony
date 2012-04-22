@@ -13,7 +13,7 @@
  * $Copyrights$
  *
  ************************************************************************************/
-namespace Rock\OnSymfony\HttpPageFlowBundle\Test\Flow;
+namespace Rock\OnSymfony\HttpPageFlowBundle\Tests\Flow;
 
 // <Use> : PHPUnit Test
 use \PHPUnit_Framework_TestCase as TestCase;

@@ -25,21 +25,25 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\EventListener;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
-use Rock\OnSymfony\Standard\ComponentExtendBundle\Session\Proxy\ISessionProxyManager;
+// <Use> : Events
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as RouteConfiguration;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
-
-use Rock\OnSymfony\FlowFrameworkBundle\Configuration\Flow as FlowConfiguration;
-use Rock\OnSymfony\FlowBundle\Flow\Builder\IFlowBuilder;
-use Rock\OnSymfony\FlowBundle\Flow\Manager\FlowManager;
-use Rock\OnSymfony\FlowFrameworkBundle\Request\Resolver\HttpRequestResolver;
-use Rock\OnSymfony\FlowBundle\Flow\FlowDirection;
-
 use Symfony\Component\HttpKernel\KernelEvents;
-use Rock\OnSymfony\FlowFrameworkBundle\Controller\ControllerFilterController;
+
+// <Use> : Flow Components
+use Rock\Components\Flow\Builder\IFlowBuilder;
+use Rock\Components\Flow\Manager\FlowManager;
+use Rock\Components\Flow\Directions;
+// <Use> : WebPage Flow Requets Resolver
+use Rock\OnSymfony\HttpPageFlowBundle\Request\Resolver\RequestResolver;
+// <Use> : WebPage Flow Controller 
+use Rock\OnSymfony\HttpPageFlowBundle\Controller\ControllerFilterController;
+// <Use> : Annotation Configuration
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Route as RouteConfiguration;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Flow as FlowConfiguration;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Template as TemplateConfiguration;
 
 class ControllerListener
 {
@@ -52,12 +56,15 @@ class ControllerListener
 	 */
 	protected $resolver;
 
+	protected $builder;
 	/**
 	 *
 	 */
 	public function __construct(ContainerInterface $container)
 	{
 		$this->container = $container;
+		$this->builder   = null;
+		$this->resolver  = new RequestResolver();
 	}
 
 	/**
@@ -65,7 +72,7 @@ class ControllerListener
 	 */
 	public function onKernelRequest(GetResponseEvent $event)
 	{
-		$this->resolver  = new HttpRequestResolver($this->getSessionManager(), $event->getRequest());
+		//$this->resolver  = new RequestResolver();
 	}
 
 	/**
@@ -79,50 +86,55 @@ class ControllerListener
 		}
 
 		// Create ReflectionObject Instance
-		$object   = new \ReflectionObject($controller[0]);
+		$object = new \ReflectionObject($controller[0]);
 		// Get ReflectionMethod Instance
 		$method   = $object->getMethod($controller[1]);
-		$resolver = $this->getRequestResolver();
 
 		$defaultRoute = '';
-		$flowConf = null;
+		$flowConfig = null;
+		$templateConfig = null;
 
 		$reader   = $this->getAnnotationReader();
-		$builder  = $this->getFlowBuilder();
 
 		$configurations = $reader->getMethodAnnotations($method);
+
 		// Get Annotations for $method
 		foreach($reader->getMethodAnnotations($method) as $configuration)
 		{
 			// If Annotation is for @Flow, build flow 
 			if($configuration instanceof FlowConfiguration)
 			{
-				$flowConf  = $configuration;
-				$flowConf->setDefaultRoute($defaultRoute);
+				$configuration->setController($controller[0]);
+				$this->initBuilder($configuration);
+				$this->initResolverSetting($configuration);
+				$flowConfig  = $configuration;
+				$flowConfig->setDefaultRoute($defaultRoute);
 
 				// Apply Builder Configuration
-				{
-				    $builder->setConfiguration($configuration);
-				    $builder->setController($controller[0]);
-				}
+				//{
+				//    $builder->setConfiguration($configuration);
+				//    $builder->setController($controller[0]);
+				//}
 			}
 			else if($configuration instanceof RouteConfiguration)
 			{
-				if($flowConf)
-				{
-					$flowConf->setDefaultRoute($configuration->getName());
-				}
+				if($flowConfig)
+					$flowConfig->setDefaultRoute($configuration->getName());
 				else
-				{
 					$defaultRoute  = $configuration->getName();
-				}
+			}
+			else if($configuration instanceof TemplateConfiguration)
+			{
+				$templateConfig = $configuration;
 			}
 		}
 
 		// Regist Flow
-		if($flowConf)
+		if($flowConfig)
 		{
-			$flow  = $builder->getFlow();
+			// Router name as Flow name
+			$flow  = $this->getFlowBuilder()->build($flowConfig->getValue());
+			$flow->setName($flowConfig->getName());
 			//$this->getManager()->set($resolver->getControllerName(), $flow);
 		    if($this->isFlowControllerInstance($controller[0]))
 		    {
@@ -131,8 +143,44 @@ class ControllerListener
 
 			
 			$wrapper = new ControllerFilterController($event->getController(), $flow);
+			if($templateConfig)
+				$wrapper->setTemplateConfiguration($templateConfig);
 			$wrapper->setRequestResolver($this->getRequestResolver());
 			$event->setController($wrapper->getFilterFunctionArray());
+
+		}
+	}
+	
+	protected function initRouterSetting()
+	{
+		$router  = $this->getRouter();
+	}
+	protected function initBuilder(FlowConfiguration $config)
+	{
+		// 
+		$factory = $this->container->get('rock.page_flow.factory');
+
+		$this->builder = $factory->createBuilder($config->getValue());
+	}
+
+	protected function initResolverSetting(FlowConfiguration $config)
+	{
+		$resolver  = $this->getRequestResolver();
+		// Override Setting
+		if($key = $config->getDirectionKey())
+			$resolver->setDirectionKey($key);
+	}
+	/**
+	 *
+	 */
+	protected function initFlowSetting(IFlow $flow, FlowConfiguration $config)
+	{
+		if($flow instanceof EventDisptacherInterface)
+		{
+			foreach($config->getListeners() as $eventname => $listener)
+			{
+				$flow->addListener($eventname, $listener);
+			}
 		}
 	}
 	/**
@@ -152,12 +200,16 @@ class ControllerListener
 		return $this->container->get('annotation_reader');
 	}
 
+	public function getBuilderFactory()
+	{
+		return $this->container->get('rock.page_flow.builder_factory');
+	}
 	/**
 	 *
 	 */
 	public function getFlowBuilder()
 	{
-		return $this->container->get('rock.flow.builder');
+		return $this->builder;
 	}
 
 	/**
@@ -165,28 +217,7 @@ class ControllerListener
 	 */
 	public function getFlowManager()
 	{
-		return $this->container->get('rock.flow.manager');
-	}
-
-	/**
-	 *
-	 */
-	public function getSessionManager()
-	{
-		try
-		{
-			$manager = $this->container->get('session.proxy.manager');
-		}
-		catch(ServiceNotFoundException $ex)
-		{
-			throw new \Exception(sprintf('Service "session.proxy.manager" is not defined, but FlowFramework Required. Plz read README to how to use.'));
-		}
-	
-		if(!$manager instanceof ISessionProxyManager)
-		{
-			throw new \Exception(sprintf('Service "session.proxy.manager" is not an instance of "ISessionProxyManager", but "%s" given.', get_class($manager)));
-		}
-		return $manager;
+		return $this->container->get('rock.page_flow.manager');
 	}
 
 	/**

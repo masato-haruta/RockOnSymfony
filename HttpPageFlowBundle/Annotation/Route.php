@@ -14,15 +14,16 @@
  *
  ************************************************************************************/
 // <Interface>
-namespace Rock\OnSymfony\HttpPageFlowBundle\Configuration;
+namespace Rock\OnSymfony\HttpPageFlowBundle\Annotation;
 
 // <Base>
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template as Configuration;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as Configuration;
+
 
 /**
  * @Annotation
  */
-class Template extends Configuration
+class Route extends Configuration
 {
 	
 }

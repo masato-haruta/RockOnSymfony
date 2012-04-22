@@ -7,9 +7,9 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\Controller;
 use Rock\OnSymfony\HttpPageFlowBundle\Controller\FlowController as Controller;
 
 // <Use> : Annotation
-use Rock\OnSymfony\HttpPageFlowBundle\Configuration\Flow;
-use Rock\OnSymfony\HttpPageFlowBundle\Configuration\Route;
-use Rock\OnSymfony\HttpPageFlowBundle\Configuration\Template;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Flow;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Route;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Template;
 // <Use> : Rock Flow 
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IFlowEvent;
 
@@ -19,7 +19,7 @@ class DemoController extends Controller
      * @Route("/", name="rock_demo_default")
      * @Route("/{state}", name="rock_demo_default_state")
      * @Template()
-	 * @Flow(template="Default", route="rock_demo_default", useRedirect=false, onInit="onIndexInit")
+	 * @Flow("Form", route="rock_demo_default", onInit="onIndexInit")
      */
     public function indexAction()
     {

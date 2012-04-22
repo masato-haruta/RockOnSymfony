@@ -14,16 +14,18 @@
  *
  ************************************************************************************/
 // <Interface>
-namespace Rock\OnSymfony\HttpPageFlowBundle\Configuration;
+namespace Rock\OnSymfony\HttpPageFlowBundle\Annotation;
 
 // <Base>
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as Configuration;
-
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template as Configuration;
 
 /**
  * @Annotation
  */
-class Route extends Configuration
+class Template extends Configuration
 {
-	
+	public function setVar($name, $value)
+	{
+		$this->vars[$name] = $value;
+	}
 }
