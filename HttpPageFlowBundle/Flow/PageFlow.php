@@ -123,7 +123,7 @@ class PageFlow extends BaseFlow
 	protected function doInitPath()
 	{
 		$this->dispatch(PageEvents::ON_INIT_PATH, new HandleFlowEvent());
-		parent::doInit();
+		parent::doInitPath();
 	}
 	protected function doShutdown()
 	{

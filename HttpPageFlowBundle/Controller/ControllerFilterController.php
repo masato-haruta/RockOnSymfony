@@ -168,7 +168,12 @@ class ControllerFilterController
 			//$template  = $this->getTemplateResolver()->resolve($template, $step);
 			//$request->attributes->set('_template', $template);
 			
-			$this->getTemplateConfiguration()->setVar('state',$output->getPath->last()->current()->getName());
+			$trails = $output->getTrail();
+			if($trails)
+			{
+				$current = $trails->last()->current()->getName();
+				$this->getTemplateConfiguration()->setVar('state',$current);
+			}
 		}
 
 		$request = $this->getRequest();
