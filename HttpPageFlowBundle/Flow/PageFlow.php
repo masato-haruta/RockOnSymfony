@@ -23,16 +23,24 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\Event;
-
+// <Use> : Flow Event
 use Rock\OnSymfony\HttpPageFlowBundle\Event\PageEvents;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\HandleFlowEvent;
+
+// <Use> : Flow Components
+use Rock\Components\Flow\State\IFlowState;
+use Rock\Components\Flow\Output\IOutput;
+// <Use> : Page
+use Rock\OnSymfony\HttpPageFlowBundle\Flow\Page;
+
 /**
  *
  */
 class PageFlow extends BaseFlow
   implements
-	IEventDispatcherAware
+	EventDispatcherInterface
 {
+	protected $output     = null;
 	protected $dispatcher = null;
 
 	/**
@@ -92,7 +100,7 @@ class PageFlow extends BaseFlow
 	 */
 	public function hasListeners($eventName = null)
 	{
-		return $this->hasListeners($eventName);
+		return $this->getEventDispatcher()->hasListeners($eventName);
 	}
 
 	/**
@@ -114,20 +122,96 @@ class PageFlow extends BaseFlow
 	}
 
 	//-- doXxx Method
+	/**
+	 * 
+	 */
 	protected function doInit()
 	{
-		$this->dispatch(PageEvents::ON_INIT, new HandleFlowEvent());
+		$this->dispatch(PageEvents::ON_INIT, new HandleFlowEvent($this));
+
 		parent::doInit();
 	}
 	
+	/**
+	 * 
+	 */
 	protected function doInitPath()
 	{
-		$this->dispatch(PageEvents::ON_INIT_PATH, new HandleFlowEvent());
+		$this->dispatch(PageEvents::ON_INIT_PATH, new HandleFlowEvent($this));
 		parent::doInitPath();
 	}
+	/**
+	 * 
+	 */
 	protected function doShutdown()
 	{
-		$this->dispatch(PageEvents::ON_SHUTDOWN, new HandleFlowEvent());
+		$this->dispatch(PageEvents::ON_SHUTDOWN, new HandleFlowEvent($this));
 		parent::doShutdown();
+	}
+
+	protected function doHandleInput(IFlowState $state)
+	{
+		$this->dispatch(PageEvents::ON_HANDLE_INPUT, new HandleFlowEvent($this));
+		// Set state output as this output
+		$this->allocateOutput($state->getOutput());
+
+		parent::doHandleInput($state);
+		// Release Output
+		$this->releaseOutput();
+	}
+
+	/**
+	 *
+	 */
+	protected function allocateOutput(IOutput $output)
+	{
+		$this->output = $output;
+	}
+	/**
+	 *
+	 */
+	protected function releaseOutput()
+	{
+		$this->output = null;
+	}
+
+	/**
+	 *
+	 */
+	public function set($name, $value)
+	{
+		if($this->output)
+			$this->output->set($name, $value);
+	}
+
+	/**
+	 *
+	 */
+	public function get($name)
+	{
+		if($this->output)
+			return $this->output->get($name);
+		return null;
+	}
+	/**
+	 *
+	 */
+	public function all()
+	{
+		if($this->output)
+			return $this->output->all();
+
+		return array();
+	}
+
+	/**
+	 *
+	 */
+	protected function createPage($name, $listener)
+	{
+		$page   = new Page($this->getPath(), $name, $listener);
+		$this->getPath()->addState($page);
+		
+		return $page;
 	}
 }

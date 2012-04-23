@@ -18,24 +18,35 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\Event;
 // <Base>
 use Symfony\Component\EventDispatcher\Event;
 // <Interface>
-use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent
+use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;
+
+// <Use>
+use Rock\Components\Flow\IFlow;
+use Rock\Components\Http\Flow\IPage;
 
 /**
  *
  */
-class HandlePageEvent extends Event
+class HandlePageEvent extends HandleFlowEvent
   implements
     IPageEvent
 {
 	protected $page;
-	protected $flow;
+	/**
+	 *
+	 */
+	public function __construct(IFlow $flow, IPage $page)
+	{
+		parent::__construct($flow);
+
+		$this->page  = $page;
+	}
+
+	/**
+	 *
+	 */
 	public function getPage()
 	{
 		return $this->page;
-	}
-
-	public function getPageFlow()
-	{
-		return $this->flow;
 	}
 }

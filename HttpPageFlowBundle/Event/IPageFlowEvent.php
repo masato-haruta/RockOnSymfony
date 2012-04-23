@@ -19,6 +19,6 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\Event;
 
 interface IPageFlowEvent
 {
-	public function getPageFlow();
+	public function getFlow();
 
 }

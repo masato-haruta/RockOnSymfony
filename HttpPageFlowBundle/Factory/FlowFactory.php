@@ -19,12 +19,20 @@ use Rock\Components\Http\Flow\Factory\Factory;
 
 // <Use>
 use Symfony\Component\DependencyInjection\ContainerInterface;
+// <Use> : Type
+use Rock\OnSymfony\HttpPageFlowBundle\Type\DefaultType;
 
 
 class FlowFactory extends Factory
 {
+	/**
+	 *
+	 */
 	protected $container;
-	//public function __construct(ISessionManager $manager = null)
+
+	/**
+	 *
+	 */
 	public function __construct(ContainerInterface $container)
 	{
 		//parent::__construct($manager);
@@ -33,16 +41,24 @@ class FlowFactory extends Factory
 		$this->container = $container;
 	}
 
+	protected function init()
+	{
+		$this->defaultType  = new DefaultType();
+	}
+	/**
+	 *
+	 */
 	public function getEventDispatcher()
 	{
-		$class= $this->container->getParameter('rock.page_flow.event_dispatcher.class');
-
-		return new $class();
+		return $this->container->get('rock.page_flow.event_dispatcher');
 	}
+	/**
+	 *
+	 */
 	public function create($name)
 	{
 		$flow = parent::create($name);
-
+		
 		$flow->setEventDispatcher($this->getEventDispatcher());
 
 		return $flow;

@@ -69,6 +69,7 @@
 		<service 
 			id="rock.page_flow.event_dispatcher" 
 			class="%rock.page_flow.event_dispatcher.class%"
+			scope="prototype"
 		>
 		</service>
 	</services>

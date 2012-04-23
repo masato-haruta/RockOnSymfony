@@ -27,8 +27,10 @@ use Rock\Components\Flow\IFlowAware;
 use Rock\Components\Flow\IFlow;
 use Rock\Components\Flow\FlowDirections;
 
+// <Use> : 
 use Rock\OnSymfony\HttpPageFlowBundle\Request\Resolver\RequestResolver;
 //use Rock\OnSymfony\HttpPageFlowBundle\Flow\State\FlowStateHttpProxy;
+
 
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Template as TemplateConfiguration;
 /** 
@@ -158,7 +160,7 @@ class ControllerFilterController
 		}
 		
 		// Merge Argument for controller
-		$args = array_merge($args, $output->getParameters());
+		$args = array_merge($args, $output->all());
 
 		// Change Template for current state
 		{
@@ -176,19 +178,20 @@ class ControllerFilterController
 			}
 		}
 
-		$request = $this->getRequest();
-		$router  = $this->getControllerInstance()->get('router');
-		$route   = $request->attributes->get('_route');
-		
-		$this->getControllerInstance()->get('request')->attributes->set(
-		    '_flow', 
-		    new PageStateProxy(
-				$output->getState(), 
-				$router, 
-				$route, 
-				array(FlowRequests::FLOW_ID_KEY => $output->getState()->getSession()->getFlowId())
-			)
-		);
+		//$request = $this->getRequest();
+		//$router  = $this->getControllerInstance()->get('router');
+		//$route   = $request->attributes->get('_route');
+		//
+		//// Set PageFlowState Proxy as attributes "_flow"
+		//$this->getControllerInstance()->get('request')->attributes->set(
+		//    '_flow', 
+		//    new PageStateProxy(
+		//		$output->getState(), 
+		//		$router, 
+		//		$route, 
+		//		array(FlowRequests::FLOW_ID_KEY => $output->getState()->getSession()->getFlowId())
+		//	)
+		//);
 
 		return $args;
 	}
@@ -199,10 +202,16 @@ class ControllerFilterController
 	{
 		return false;
 	}
+	/**
+	 *
+	 */
 	public function setTemplateConfiguration(TemplateConfiguration $config)
 	{
 		$this->template  = $config;
 	}
+	/**
+	 *
+	 */
 	public function getTemplateConfiguration()
 	{
 		return $this->template;

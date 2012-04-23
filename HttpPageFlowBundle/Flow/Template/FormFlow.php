@@ -20,7 +20,7 @@ use Rock\OnSymfony\HttpPageFlowBundle\Flow\PageFlow;
 
 // <Use> : Event
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;
-use Rock\Components\Automaton\Input\IInput as IAutomatonInput;
+use Rock\Components\Flow\Input\IInput;
 
 class FormFlow extends PageFlow
 {
@@ -32,22 +32,23 @@ class FormFlow extends PageFlow
 		parent::doInit();
 
 		$this
-			->setEntryPoint('input', array($this, 'doPageInput'))
-			->addNext('complete', array($this, 'doPageComplete'))
+			->setEntryPage('input', array($this, 'doInput'))
+			->addPostValidation(array($this, 'doInputValidation'))
+			->addNext('complete', array($this, 'doComplete'))
 		;
 	}
 
 	/**
 	 *
 	 */
-	public function doPageInput(IAutomatonInput $event)
+	public function doInput(IInput $input)
 	{
-			throw new \Exception('Input');
+		$this->set('state', 'first');
 	}
 	/**
 	 *
 	 */
-	public function doPageComplete(IAutomatonInput $event)
+	public function doComplete(IInput $event)
 	{
 	}
 }

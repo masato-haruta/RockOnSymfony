@@ -6,10 +6,17 @@
 
 	<parameters>
 		<parameter key="rock.page_flow.event_dispatcher.class">Symfony\Bundle\FrameworkBundle\Debug\TraceableEventDispatcher</parameter>
+		<!--
+		<parameter key="rock.page_flow.event_dispatcher.class">Rock\OnSymfony\HttpPageFlowBundle\EventDispatcher\TraceableEventDispatcher</parameter>
+		-->
 	</parameters>
 
     <services>
-        <service id="rock.page_flow.event_dispatcher" class="%rock.page_flow.event_dispatcher.class%">
+        <service 
+			id="rock.page_flow.event_dispatcher" 
+			class="%rock.page_flow.event_dispatcher.class%"
+			scope="prototype"
+		>
             <tag name="monolog.logger" channel="event" />
             <argument type="service" id="service_container" />
             <argument type="service" id="logger" on-invalid="null" />

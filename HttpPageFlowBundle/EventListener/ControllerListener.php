@@ -25,6 +25,8 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\EventListener;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
+// <Use> : EventDispatcher
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 // <Use> : Events
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -32,6 +34,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 // <Use> : Flow Components
+use Rock\Components\Flow\IFlow;
 use Rock\Components\Flow\Builder\IFlowBuilder;
 use Rock\Components\Flow\Manager\FlowManager;
 use Rock\Components\Flow\Directions;
@@ -134,7 +137,8 @@ class ControllerListener
 		{
 			// Router name as Flow name
 			$flow  = $this->getFlowBuilder()->build($flowConfig->getValue());
-			$flow->setName($flowConfig->getName());
+			$this->initFlowSetting($flow, $flowConfig);
+
 			//$this->getManager()->set($resolver->getControllerName(), $flow);
 		    if($this->isFlowControllerInstance($controller[0]))
 		    {
@@ -175,13 +179,14 @@ class ControllerListener
 	 */
 	protected function initFlowSetting(IFlow $flow, FlowConfiguration $config)
 	{
-		if($flow instanceof EventDisptacherInterface)
+		if($flow instanceof EventDispatcherInterface)
 		{
 			foreach($config->getListeners() as $eventname => $listener)
 			{
 				$flow->addListener($eventname, $listener);
 			}
 		}
+		$flow->setName($config->getName());
 	}
 	/**
 	 *
