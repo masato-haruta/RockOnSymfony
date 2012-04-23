@@ -15,12 +15,13 @@
  ****/
 namespace Rock\OnSymfony\HttpPageFlowBundle\Factory;
 // <Base>
-use Rock\Components\Http\Flow\Factory\Factory as BaseFactory;
+use Rock\Components\Http\Flow\Factory\Factory;
 
 // <Use>
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class FlowFactory extends BaseFactory
+
+class FlowFactory extends Factory
 {
 	protected $container;
 	//public function __construct(ISessionManager $manager = null)
@@ -47,3 +48,4 @@ class FlowFactory extends BaseFactory
 		return $flow;
 	}
 }
+

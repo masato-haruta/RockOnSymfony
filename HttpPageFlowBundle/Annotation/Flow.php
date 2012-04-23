@@ -18,6 +18,8 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\Annotation;
 // <Interface>
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
 
+// <Use> : Event
+use Rock\OnSymfony\HttpPageFlowBundle\Event\PageEvents;
 
 /**
  * @Annotation
@@ -147,6 +149,8 @@ class Flow
 		$this->cleanedListeners  = array();
 		foreach($this->listeners as $eventname => $listener)
 		{
+			$eventname = PageEvents::fromOnName($eventname);
+			
 			$this->cleanedListeners[$eventname]  = array($this->getController(), $listener);
 		}
 	}

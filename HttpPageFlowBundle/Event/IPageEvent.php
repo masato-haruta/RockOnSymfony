@@ -15,20 +15,10 @@
  ****/
 // <Namespace>
 namespace Rock\OnSymfony\HttpPageFlowBundle\Event;
-// <Base>
-use Symfony\Component\EventDispatcher\Event;
 
-/**
- *
- */
-class HandleFlowEvent extends Event
-  implements
-    IPageFlowEvent
+interface IPageEvent extends IPageFlowEvent
 {
-	protected $flow;
-
-	public function getPageFlow()
-	{
-		return $this->flow;
-	}
+	public function getPage();
 }
+
+

@@ -16,14 +16,23 @@
 namespace Rock\OnSymfony\HttpPageFlowBundle\Event;
 class PageEvents
 {
-	const ON_INIT      = 'flow.onInit';
-	const ON_INIT_PATH = 'flow.onInitPath';
-	const ON_SHUTDOWN  = 'flow.onShutdown';
+	const ON_INIT      = 'onInit';
+	const ON_INIT_PATH = 'onInitPath';
+	const ON_SHUTDOWN  = 'onShutdown';
 
-	const ON_PAGE      = 'flow.onPage';
+	const ON_PAGE      = 'onPage';
 
 	static public function page($name)
 	{
 		return sprintf('%s.%s',self::ON_PAGE, $name);
+	}
+	static public function fromOnName($name)
+	{
+		if(preg_match('/^onPage(?<name>.*)$/', $name, $match))
+		{
+			$name  = self::page($match['name']);
+		}
+
+		return $name;
 	}
 }

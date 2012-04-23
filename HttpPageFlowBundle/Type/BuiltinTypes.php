@@ -24,7 +24,7 @@ class BuiltinTypes extends Types
 	{
 		// 
 		$this->types  = array(
-			'Form' => '\\Rock\\OnSymfony\\HttpPageFlowBundle\\Flow\\PageFlow'
+			'Form' => '\\Rock\\OnSymfony\\HttpPageFlowBundle\\Flow\\Template\\FormFlow'
 		);
 	}
 	protected function getBuilderClass()
