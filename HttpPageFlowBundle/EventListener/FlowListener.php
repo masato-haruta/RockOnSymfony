@@ -247,6 +247,7 @@ class FlowListener extends FlowExecuteHandler
 			$state
 		);
 
+		$this->getUrlResolver()->setFlowState($output->getState());
 		// apply template value
 		$this->applyTemplateName($request, $output->getState()->getCurrent()->getName());
 

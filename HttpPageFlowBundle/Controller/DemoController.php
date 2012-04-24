@@ -19,7 +19,7 @@ class DemoController extends Controller
      * @Route("/index", name="rock_demo_default")
      * @Route("/index/{state}", name="rock_demo_default_state")
      * @Template()
-	 * @Flow("Form", route="rock_demo_default_state")
+	 * @Flow("Default", route="rock_demo_default_state", onInit="onTestInit", onPageFirst="onFirstOnTest")
      */
     public function indexAction()
     {
@@ -29,7 +29,7 @@ class DemoController extends Controller
      * @Route("/form", name="rock_demo_default_form")
      * @Route("/form/{state}", name="rock_demo_default_form_state")
      * @Template()
-	 * @Flow("Default", route="rock_demo_default_form", onInit="onTestInit", onPageFirst="onFirstOnTest")
+	 * @Flow("Form", route="rock_demo_default_form_state")
      */
 	public function formAction()
 	{

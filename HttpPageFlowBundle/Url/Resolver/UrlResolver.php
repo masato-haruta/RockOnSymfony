@@ -21,6 +21,8 @@ use Rock\Components\Http\Flow\Directions;
 
 use Symfony\Component\Routing\RouterInterface;
 
+use Rock\Components\Http\Flow\State\IPageFlowState;
+
 /**
  *
  */
@@ -31,11 +33,22 @@ class UrlResolver
 	protected $router;
 	protected $route;
 	protected $keys = array();
+	protected $patternKeys = array();
+
+	protected $state;
+
 	/**
 	 *
 	 */
 	public function __construct(RouterInterface $router, $directionKey = 'd')
 	{
+		$this->keys     = array(
+			'direction'  => 'd',
+		);
+		$this->patternKeys = array(
+			'direction'  => 'direction',
+			'state'      => 'state',
+		);
 		$this->router   = $router;
 		$this->route    = null;
 		$this->setDirectionKey($directionKey);
@@ -55,10 +68,9 @@ class UrlResolver
 	/**
 	 *
 	 */
-	public function resolveUrl($direction = null)
+	public function resolveUrl($direction)
 	{
-		$params   = array($this->getDirectionKey() => $direction);
-
+		$params  = array('_direction' => $direction);
 		// 
 		return $this->getRouter()->generate(
 			$this->getRoute(),
@@ -66,12 +78,52 @@ class UrlResolver
 		);
 	}
 
+	public function getStateForDirection($direction)
+	{
+		$flowState  = $this->getFlowState();
+
+		switch($direction)
+		{
+		case Directions::PREV:
+			$step  = $flowState->getPrev();
+			break;
+		case Directions::NEXT:
+			$step  = $flowState->getNext();
+			break;
+		case Directions::CURRENT:
+		default:
+			$step  = $flowState->getCurrent();
+			break;
+		}
+
+		return $step;
+	}
+	
 	/**
 	 *
 	 */
-	protected function getRouteParameters()
+	protected function getRouteParameters($params = array())
 	{
-		return array();
+		$direction = $params['_direction'];
+		unset($params['_direction']);
+		$route   = $this->getRouter()->getRouteCollection()->get($this->getRoute());
+		$pattern = $route->getPattern();
+
+
+		if(false !== strpos($pattern, '{'.$this->getPatternKey('state').'}'))
+		{
+			$params  = array_merge( $params, array($this->getPatternKey('state') => $this->getStateForDirection($direction)->getName()) );
+		}
+		else if(false !== strpos($pattern, '{'.$this->getPatternKey('direction').'}'))
+		{
+			$params  = array_merge( $params, array($this->getPatternKey('direction') => $direction) );
+		}
+		else
+		{
+			$params  = array_merge( $params, array($this->getKey('direction') => $direction));
+		}
+
+		return $params;
 	}
 
 	/**
@@ -118,4 +170,26 @@ class UrlResolver
 	{
 		$this->keys['direction'] = $name;
 	}
+	public function getKey($name)
+	{
+		return $this->keys[$name];
+	}
+
+	public function getPatternKey($key)
+	{
+		return $this->patternKeys[$key];
+	}
+
+	public function setFlowState(IPageFlowState $state)
+	{
+		$this->state  = $state;
+	}
+
+	public function getFlowState()
+	{
+		if(!$this->state)
+			throw new \Exception('State is not specified.');
+		return $this->state;
+	}
+
 }
