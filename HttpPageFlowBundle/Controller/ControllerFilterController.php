@@ -19,201 +19,77 @@
  ************************************************************************************/
 // <Namespace>
 namespace Rock\OnSymfony\HttpPageFlowBundle\Controller;
+//
+use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 
-// <Interface>
-use Rock\Components\Flow\IFlowAware;
-
-// <Use> : Flow Components
-use Rock\Components\Flow\IFlow;
-use Rock\Components\Flow\FlowDirections;
-
-// <Use> : 
-use Rock\OnSymfony\HttpPageFlowBundle\Request\Resolver\RequestResolver;
-//use Rock\OnSymfony\HttpPageFlowBundle\Flow\State\FlowStateHttpProxy;
-
-
-use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Template as TemplateConfiguration;
+// 
+use Symfony\Component\HttpFoundation\Request;
 /** 
  *
  */
 class ControllerFilterController
-  implements 
-    IFlowAware
+//class ControllerFilterController extends Controller
 {
 	/**
 	 *
 	 */
-	protected $flow;
-	/**
-	 *
-	 */
-	protected $controller;
+	protected $resolver;
 
-	protected $template;
 	/**
 	 *
 	 */
-	public function __construct($controller, IFlow $flow)
+	protected $controllers;
+
+	/**
+	 *
+	 */
+	public function __construct(ControllerResolverInterface $resolver, $controller = null)
 	{
-		$this->controller  = $controller;
-		$this->flow        = $flow;
+		$this->controllers = array();
+		$this->resolver    = $resolver;
+		if($controller)
+			$this->addController($controller);
 	}
 
 	/**
 	 *
 	 */
-	public function getFlow()
+	public function addController($controller)
 	{
-		return $this->flow;
+		$this->controllers[]  = $controller;
 	}
+
+
+	public function setRequest(Request $request)
+	{
+		$this->request  = $request;
+	}
+
 	/**
 	 *
 	 */
-	public function filterAction()
+	public function __invoke(Request $request)
 	{
-		$args      = func_get_args();
+		// Execute all controller functions
+		$response  = array();
 
-		$flowResponse  = $this->handleFlow($args);
-		if(!$flowResponse instanceof Response)
+		foreach($this->controllers as $controller)
 		{
-			$args     = array_merge($args, $flowResponse);
-			$response = call_user_func_array($this->controller, $args);
+			$arguments = $this->resolver->getArguments($request, $controller);
 
-			if(!$response instanceof Response)
+			$res  = call_user_func_array($controller, $arguments);
+
+			if(is_array($res))
 			{
-				$response = array_merge($flowResponse, $response); 
+				$response = array_merge($response, $res);
+			}
+			else
+			{
+				$response  = $res;
+				break;
 			}
 		}
 
 		return $response;
-	}
-
-	/**
-	 *
-	 */
-	public function getControllerInstance()
-	{
-		return $this->controller[0];
-	}
-	/**
-	 *
-	 */
-	public function getControllerAction()
-	{
-		return $this->controller[1];
-	}
-
-	/**
-	 *
-	 */
-	public function getFilterFunctionArray()
-	{
-		return array($this, 'filterAction');
-	}
-	/**
-	 *
-	 */
-	public function getRequestResolver()
-	{
-		return $this->requestResolver;
-	}
-	/**
-	 *
-	 */
-	public function setRequestResolver(RequestResolver $resolver)
-	{
-		$this->requestResolver = $resolver;
-	}
-	/**
-	 *
-	 */
-	public function getTemplateResolver()
-	{
-		return new FlowTokenResolver();
-	}
-	/**
-	 *
-	 */
-	public function getRequest()
-	{
-		$request  = $this->getControllerInstance()->get('request');
-		return $request;
-	}
-	/**
-	 *
-	 */
-	protected function handleFlow($args)
-	{
-		$flow     = $this->getFlow();
-
-		// Initialize State w/ Previous Connection State
-		$state    = $flow->createFlowState();
-
-		// Execute Flow
-		$output   = $flow->handle($this->getRequestResolver()->resolve($this->getRequest()), $state);
-
-		//
-		if($this->useRedirect() && (FlowDirection::CURRENT !== $output->getInput()->getDirection()))
-		{
-			throw new \Exception($output->getInput()->getDirection());
-			return new RedirectResponse($output->getState()->getCurrentUrl());
-		}
-		
-		// Merge Argument for controller
-		$args = array_merge($args, $output->all());
-
-		// Change Template for current state
-		{
-			//$step      = $output->getPath()->last()->current()->getName();
-			//$request   = $this->getRequest();
-			//$template  = $request->attributes->get('_template');
-			//$template  = $this->getTemplateResolver()->resolve($template, $step);
-			//$request->attributes->set('_template', $template);
-			
-			$trails = $output->getTrail();
-			if($trails)
-			{
-				$current = $trails->last()->current()->getName();
-				$this->getTemplateConfiguration()->setVar('state',$current);
-			}
-		}
-
-		//$request = $this->getRequest();
-		//$router  = $this->getControllerInstance()->get('router');
-		//$route   = $request->attributes->get('_route');
-		//
-		//// Set PageFlowState Proxy as attributes "_flow"
-		//$this->getControllerInstance()->get('request')->attributes->set(
-		//    '_flow', 
-		//    new PageStateProxy(
-		//		$output->getState(), 
-		//		$router, 
-		//		$route, 
-		//		array(FlowRequests::FLOW_ID_KEY => $output->getState()->getSession()->getFlowId())
-		//	)
-		//);
-
-		return $args;
-	}
-	/**
-	 *
-	 */
-	protected function useRedirect()
-	{
-		return false;
-	}
-	/**
-	 *
-	 */
-	public function setTemplateConfiguration(TemplateConfiguration $config)
-	{
-		$this->template  = $config;
-	}
-	/**
-	 *
-	 */
-	public function getTemplateConfiguration()
-	{
-		return $this->template;
 	}
 }

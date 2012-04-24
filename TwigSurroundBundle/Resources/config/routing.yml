@@ -1,0 +1,3 @@
+_demo:
+    resource: "@RockOnSymfonyTwigSurroundBundle/Controller/DemoController.php"
+    type:     annotation

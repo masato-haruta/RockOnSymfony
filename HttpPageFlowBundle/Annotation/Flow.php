@@ -31,7 +31,7 @@ class Flow
 	/**
 	 *
 	 */
-	protected $controller;
+	protected $owner;
 	/**
 	 *
 	 */
@@ -51,6 +51,10 @@ class Flow
 	/**
 	 *
 	 */
+	protected $token;
+	/**
+	 *
+	 */
 	protected $listeners;
 
 	protected $cleanedListeners;
@@ -61,7 +65,7 @@ class Flow
 	 */
 	public function __construct(array $values)
 	{
-		$this->controller  = null;
+		$this->owner       = null;
 		$this->listeners   = array();
 		$this->type        = 'DEFAULT';
 
@@ -112,18 +116,18 @@ class Flow
 	/**
 	 *
 	 */
-	public function setController($controller)
+	public function setListenerOwner($owner)
 	{
-		$this->controller  = $controller;
+		$this->owner  = $owner;
 	}
 	/**
 	 *
 	 */
-	public function getController()
+	public function getListenerOwner()
 	{
-		if(!$this->controller)
-			throw new \Exception("Controller is not initialzed yet.");
-		return $this->controller;
+		if(!$this->owner)
+			throw new \Exception("Listener Owneris not initialzed yet.");
+		return $this->owner;
 	}
 
 	// Direction
@@ -151,7 +155,7 @@ class Flow
 		{
 			$eventname = PageEvents::fromOnName($eventname);
 			
-			$this->cleanedListeners[$eventname]  = array($this->getController(), $listener);
+			$this->cleanedListeners[$eventname]  = array($this->getListenerOwner(), $listener);
 		}
 	}
 	/**
@@ -188,5 +192,15 @@ class Flow
     public function getAliasName()
 	{
 	    return 'flow';
+	}
+
+
+	public function setTemplateToken($token)
+	{
+		$this->token  = $token;
+	}
+	public function getTemplateToken()
+	{
+		return $this->token;
 	}
 }

@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="twig.parser.class">Rock_OnTwig_Extensions_Parser</parameter>
+        <parameter key="twig.compiler.class">Rock_OnTwig_Extensions_Compiler</parameter>
+
+		<!-- Extension -->
+        <parameter key="rock.on_twig.extension.surround.class">Rock_OnTwig_SurroundExtensions_Extension_Surround</parameter>
+    </parameters>
+    <services>
+        <service id="rock.on_twig.extension.surrond" class="%rock.on_twig.extension.surround.class%">
+            <tag name="twig.extension"/>
+        </service>
+
+		<!-- Fix Twig Components Twig -->
+        <service id="twig.compiler" class="%twig.compiler.class%">
+			<argument type="service" id="twig"/>
+        </service>
+        <service id="twig" class="%twig.class%">
+            <argument type="service" id="twig.loader" />
+            <argument>%twig.options%</argument>
+			<call method="setCompiler">
+			  <argument type="service" id="twig.compiler"/>
+			</call>
+			<call method="setParser">
+			  <argument type="service" id="twig.parser"/>
+			</call>
+		</service>
+        <service id="twig.parser" class="%twig.parser.class%">
+			<argument type="service" id="twig"/>
+        </service>
+    </services>
+</container>

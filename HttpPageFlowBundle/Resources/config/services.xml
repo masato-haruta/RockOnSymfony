@@ -7,20 +7,25 @@
 	<parameters>
 		<parameter key="rock.page_flow.factory.class">Rock\OnSymfony\HttpPageFlowBundle\Factory\FlowFactory</parameter>
 		<parameter key="rock.page_flow.builtin_types.class">Rock\OnSymfony\HttpPageFlowBundle\Type\BuiltinTypes</parameter>
-		<parameter key="rock.page_flow.manager.class">Rock\Components\Flow\Manager\FlowManager</parameter>
-		<parameter key="rock.page_flow.event_listener.class">Rock\OnSymfony\HttpPageFlowBundle\EventListener\ControllerListener</parameter>
+		<parameter key="rock.page_flow.state_stack.class">Rock\OnSymfony\HttpPageFlowBundle\State\FlowStateStack</parameter>
+		<parameter key="rock.page_flow.event_listener.class">Rock\OnSymfony\HttpPageFlowBundle\EventListener\FlowListener</parameter>
 		<parameter key="rock.page_flow.session_manager.class">Rock\OnSymfony\HttpPageFlowBundle\Session\SessionManager</parameter>
 
 		<parameter key="rock.page_flow.event_dispatcher.class">Symfony\Component\EventDispatcher\EventDispatcher</parameter>
+		<parameter key="rock.page_flow.twig.extensions.class">Rock\OnSymfony\HttpPageFlowBundle\Twig\Extension\HttpPageFlowTwigExtension</parameter>
+
+		<parameter key="rock.page_flow.url.direction_key">d</parameter>
+		<parameter key="rock.page_flow.url.resolver.class">Rock\OnSymfony\HttpPageFlowBundle\Url\Resolver\UrlResolver</parameter>
+		<parameter key="rock.page_flow.request.resolver.class">Rock\OnSymfony\HttpPageFlowBundle\Request\Resolver\RequestResolver</parameter>
+		<parameter key="rock.page_flow.controller.filter.class">Rock\OnSymfony\HttpPageFlowBundle\Controller\ControllerFilterController</parameter>
 	</parameters>
 
     <services>
         <!-- Flow Manager -->
         <service 
-			id="rock.page_flow.manager" 
-			class="%rock.page_flow.manager.class%"
+			id="rock.page_flow.state_stack" 
+			class="%rock.page_flow.state_stack.class%"
 		>
-		    <tag name="rock.page_flow.manager" />
 		</service>
         <!-- Flow Template Factory -->
         <service 
@@ -55,13 +60,13 @@
 		    <argument type="service" id="service_container"/>
 		    <tag 
 				name="kernel.event_listener" 
-				event="kernel.request" 
-				method="onKernelRequest"
+				event="kernel.controller" 
+				method="onKernelController"
 			/>
 		    <tag 
 				name="kernel.event_listener" 
-				event="kernel.controller" 
-				method="onKernelController"
+				event="kernel.response" 
+				method="onKernelResponse"
 			/>
 		</service>
 		
@@ -71,6 +76,35 @@
 			class="%rock.page_flow.event_dispatcher.class%"
 			scope="prototype"
 		>
+		</service>
+		<!-- Resolvers -->
+		<service 
+			id="rock.page_flow.url.resolver"
+			class="%rock.page_flow.url.resolver.class%"
+			scope="prototype"
+		>
+			<argument type="service" id="router" />
+			<argument>%rock.page_flow.url.direction_key%</argument>
+		</service>
+		<service
+			id="rock.page_flow.request.resolver"
+			class="%rock.page_flow.request.resolver.class%"
+		>
+		</service>
+
+		<!-- Twig Extension -->
+		<service 
+			id="rock.page_flow.twig.extensions"
+			class="%rock.page_flow.twig.extensions.class%"
+		>
+			<argument type="service" id="rock.page_flow.state_stack" />
+			<tag name="twig.extension"/>
+		</service>
+		<service 
+		    id="rock.page_flow.controller.filter"
+		    class="%rock.page_flow.controller.filter.class%"
+		>
+			<argument type="service" id="controller_resolver"/>
 		</service>
 	</services>
 </container>

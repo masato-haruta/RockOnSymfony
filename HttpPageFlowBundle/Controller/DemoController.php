@@ -8,8 +8,8 @@ use Rock\OnSymfony\HttpPageFlowBundle\Controller\FlowController as Controller;
 
 // <Use> : Annotation
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Flow;
-use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Route;
-use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 // <Use> : Rock Flow 
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageFlowEvent;
 
@@ -19,19 +19,19 @@ class DemoController extends Controller
      * @Route("/index", name="rock_demo_default")
      * @Route("/index/{state}", name="rock_demo_default_state")
      * @Template()
-	 * @Flow("Form", route="rock_demo_default")
+	 * @Flow("Form", route="rock_demo_default_state")
      */
     public function indexAction()
     {
         return array('name' => 'hello');
     }
     /**
-     * @Route("/test", name="rock_demo_default_test")
-     * @Route("/test/{state}", name="rock_demo_default_test_state")
+     * @Route("/form", name="rock_demo_default_form")
+     * @Route("/form/{state}", name="rock_demo_default_form_state")
      * @Template()
-	 * @Flow("Default", route="rock_demo_default", onInit="onTestInit", onPageFirst="onFirstOnTest")
+	 * @Flow("Default", route="rock_demo_default_form", onInit="onTestInit", onPageFirst="onFirstOnTest")
      */
-	public function testAction()
+	public function formAction()
 	{
 		return array();
 	}
