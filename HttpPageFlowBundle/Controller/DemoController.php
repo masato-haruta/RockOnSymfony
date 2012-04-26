@@ -3,7 +3,6 @@
 namespace Rock\OnSymfony\HttpPageFlowBundle\Controller;
 
 // <Base>
-//use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Rock\OnSymfony\HttpPageFlowBundle\Controller\FlowController as Controller;
 
 // <Use> : Annotation
@@ -12,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 // <Use> : Rock Flow 
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageFlowEvent;
+use Rock\Components\Flow\Input\IInput as IFlowInput;
 
 class DemoController extends Controller
 {
@@ -19,11 +19,11 @@ class DemoController extends Controller
      * @Route("/index", name="rock_demo_default")
      * @Route("/index/{state}", name="rock_demo_default_state")
      * @Template()
-	 * @Flow("Default", route="rock_demo_default_state", onInit="onTestInit", onPageFirst="onFirstOnTest")
+	 * @Flow("Default", route="rock_demo_default_state", directionOnRoute="direction", stateOnRoute="state", onInit="onTestInit", onPageFirst="onFirstOnTest")
      */
     public function indexAction()
     {
-        return array('name' => 'hello');
+        return array('name' => 'default');
     }
     /**
      * @Route("/form", name="rock_demo_default_form")
@@ -45,18 +45,22 @@ class DemoController extends Controller
 		$flow
 		    ->setEntryPoint('first')
 		    ->addNext('second', array($this, 'doSecondOnTest'))
+		    ->addNext('third', array($this, 'doThirdOnTest'))
+			->end()
 		;
-
-		
 	}
 
 	public function onFirstOnTest(IPageFlowEvent $event)
 	{
-	    $event->getFlow()->set('state', 'first');
+	    $event->getFlow()->set('name', 'first');
 	}
 
-	public function doSecondOnTest(IAutomatonInput $input)
+	public function doSecondOnTest(IFlowInput $input)
 	{
-		$input->getFlow()->set('state', 'second');
+		$this->getFlow()->set('name', 'second');
+	}
+	public function doThirdOnTest(IFlowInput $input)
+	{
+		$this->getFlow()->set('name', 'end');
 	}
 }

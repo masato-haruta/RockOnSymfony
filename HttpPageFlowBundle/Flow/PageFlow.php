@@ -143,10 +143,10 @@ class PageFlow extends BaseFlow
 	/**
 	 * 
 	 */
-	protected function doShutdown()
+	protected function doShutdown(IFlowState $state)
 	{
+		parent::doShutdown($state);
 		$this->dispatch(PageEvents::ON_SHUTDOWN, new HandleFlowEvent($this));
-		parent::doShutdown();
 	}
 
 	protected function doHandleInput(IFlowState $state)

@@ -1,5 +1,12 @@
 {% extends "::base.html.twig" %}
 
 {% block body %}
-  {{ state }}
+  {{ name }}
+
+  {% if page_prev %}
+  <a href="{{page_prev}}">前へ</a>
+  {% endif %}
+  {% if page_next %}
+  <a href="{{page_next}}">次へ</a>
+  {% endif %}
 {% endblock %}

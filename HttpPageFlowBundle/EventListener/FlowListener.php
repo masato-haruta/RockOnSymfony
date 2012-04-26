@@ -49,6 +49,9 @@ use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Template as FlowTemplateConfigu
 use Symfony\Component\HttpFoundation\Request;
 use Rock\OnSymfony\HttpPageFlowBundle\State\PageFlowStateProxy;
 
+// <Use> : Flow
+use Rock\Components\Flow\IFlowContainable;
+
 class FlowListener extends FlowExecuteHandler
 {
 	/**
@@ -69,6 +72,11 @@ class FlowListener extends FlowExecuteHandler
 	 *
 	 */
 	protected $templateConfiguration = null;
+
+	/**
+	 * Original Controller
+	 */
+	protected $controller;
 	/**
 	 *
 	 */
@@ -121,11 +129,12 @@ class FlowListener extends FlowExecuteHandler
 				{
 					$newController  = $this->getControllerFilterController();
 
-					// Flow should called before original controller dose.
-					$newController->addController(array($this, 'handleFlow'));
-
 					// Add original controller
 					$newController->addController($controller);
+					$this->setOriginalController($controller);
+
+					// Flow should called before original controller dose.
+					$newController->addController(array($this, 'handleFlow'));
 
 					$event->setController($newController);
 
@@ -204,18 +213,31 @@ class FlowListener extends FlowExecuteHandler
 		return $this->flowConfiguration;
 	}
 
+	/**
+	 *
+	 */
 	public function setRouteConfiguration(RouteConfiguration $config)
 	{
 		$this->routeConfiguration = $config;
 	}
+
+	/**
+	 *
+	 */
 	public function getRouteConfiguration()
 	{
 		return $this->routeConfiguration;
 	}
+	/**
+	 *
+	 */
 	public function setTemplateConfiguration(TemplateConfiguration $config)
 	{
 		$this->templateConfiguration = $config;
 	}
+	/**
+	 *
+	 */
 	public function getTemplateConfiguration()
 	{
 		return $this->templateConfiguration;
@@ -228,6 +250,7 @@ class FlowListener extends FlowExecuteHandler
 	{
 		//
 		$flow  = $this->getBuilder()->build($this->getFlowConfiguration()->getValue());
+		$this->setFlowOnOriginal($flow);
 
 		// Set Flow instance as flow, so action parameter can solve $flow
 		$request->attributes->set('flow', $flow);
@@ -242,8 +265,9 @@ class FlowListener extends FlowExecuteHandler
 
 		$state   = $flow->createFlowState();
 		
+		$input   = $this->getRequestResolver()->resolveInput($request);
 		$output  = $flow->handle(
-			$this->getRequestResolver()->resolveInput($request),
+			$input,
 			$state
 		);
 
@@ -263,6 +287,9 @@ class FlowListener extends FlowExecuteHandler
 		return $output->all();
 	}
 
+	/**
+	 *
+	 */
 	protected function applyTemplateName(Request $request, $name)
 	{
 		if($request->attributes->has('_template'))
@@ -289,6 +316,9 @@ class FlowListener extends FlowExecuteHandler
 		}
 	}
 	
+	/**
+	 *
+	 */
 	protected function initBuilder()
 	{
 		// 
@@ -306,10 +336,11 @@ class FlowListener extends FlowExecuteHandler
 		// Setup UrlResolver
 		$resolver  = $this->getUrlResolver();
 		// Override Setting
-		if($key = $config->getDirectionKey())
-			$resolver->setDirectionKey($key);
+		if($key = $config->getDirectionOnRoute())
+			$resolver->setKey('direction', $key);
+		if($key = $config->getStateOnRoute())
+			$resolver->setKey('state', $key);
 		$resolver->setRoute($config->getRoute());
-
 
 		// Setup RequestResolver
 		$this->getRequestResolver()->setUrlResolver($resolver);
@@ -345,5 +376,26 @@ class FlowListener extends FlowExecuteHandler
 	public function getStateStack()
 	{
 		return $this->container->get('rock.page_flow.state_stack');
+	}
+
+
+	public function setOriginalController($controller)
+	{
+		$this->controller = $controller;
+	}
+
+	public function setFlowOnOriginal(IFlow $flow)
+	{
+		if($this->controller)
+		{
+			if(is_array($this->controller) && ($this->controller[0] instanceof IFlowContainable))
+			{
+				$this->controller[0]->setFlow($flow);
+			}
+			else if(is_object($this->controller) && ($this->controller instanceof IFlowContainable))
+			{
+				$this->controller->setFlow($flow);
+			}
+		}
 	}
 }

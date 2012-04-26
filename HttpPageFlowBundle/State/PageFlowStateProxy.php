@@ -20,7 +20,7 @@ use Rock\Components\Http\Flow\State\IPageFlowState;
 // <Use> : FlowState
 use Rock\Components\Flow\State\IFlowState;
 // <Use> : Directions
-use Rock\Components\Http\Flow\Directions;
+use Rock\Components\Flow\Directions;
 use Rock\OnSymfony\HttpPageFlowBundle\Url\Resolver\IUrlResolver;
 
 /**
@@ -57,21 +57,31 @@ class PageFlowStateProxy
 	 */
 	public function getCurrent()
 	{
-		return $this->getUrlResolver()->resolveUrl(Directions::CURRENT);
+		$current = null;
+		$trails  = $this->getSource()->getTrail();
+		if($trails)
+			$current  = $trails->last()->current();
+
+		return $this->getUrlResolver()->resolveUrlFromState($current);
 	}
 	/**
 	 *
 	 */
 	public function getPrev()
 	{
-		return $this->getUrlResolver()->resolveUrl(Directions::PREV);
+		if(!$this->hasPrev())
+			throw new \Exception('Flow dose not have prev state.');
+		return $this->getUrlResolver()->resolveUrlFromDirection(Directions::PREV);
 	}
 	/**
 	 *
 	 */
 	public function getNext()
 	{
-		return $this->getUrlResolver()->resolveUrl(Directions::NEXT);
+		if(!$this->hasNext())
+			throw new \Exception('Flow dose not have next state.');
+		else
+			return $this->getUrlResolver()->resolveUrlFromDirection(Directions::NEXT);
 	}
 	
 	/**
@@ -79,12 +89,14 @@ class PageFlowStateProxy
 	 */
 	public function hasPrev()
 	{
+		return $this->getSource()->hasPrev();
 	}
 	/**
 	 *
 	 */
 	public function hasNext()
 	{
+		return $this->getSource()->hasNext();
 	}
 
 	/**

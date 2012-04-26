@@ -17,12 +17,13 @@
 namespace Rock\OnSymfony\HttpPageFlowBundle\Url\Resolver;
 // <Use> : Symfony Request
 use Symfony\Component\HttpFoundation\Request;
-use Rock\Components\Http\Flow\Directions;
+use Rock\Components\Flow\Directions;
 
 use Symfony\Component\Routing\RouterInterface;
-
+//
 use Rock\Components\Http\Flow\State\IPageFlowState;
-
+// <Use>
+use Rock\Components\Http\Flow\IPage;
 /**
  *
  */
@@ -33,44 +34,60 @@ class UrlResolver
 	protected $router;
 	protected $route;
 	protected $keys = array();
-	protected $patternKeys = array();
 
 	protected $state;
 
 	/**
 	 *
 	 */
-	public function __construct(RouterInterface $router, $directionKey = 'd')
+	public function __construct(RouterInterface $router, $keys = array())
 	{
-		$this->keys     = array(
-			'direction'  => 'd',
-		);
-		$this->patternKeys = array(
+		$this->keys     = array_merge(array(
 			'direction'  => 'direction',
 			'state'      => 'state',
-		);
+		), $keys);
 		$this->router   = $router;
 		$this->route    = null;
-		$this->setDirectionKey($directionKey);
 	}
 
+
+	/**
+	 *
+	 */
+	public function resolveStateFromRequest(Request $request)
+	{
+		return $request->get($this->getKey('state'));
+	}
 
 	/**
 	 *
 	 */
 	public function resolveDirectionFromRequest(Request $request)
 	{
-		$key  = $this->getDirectionKey();
-
-		return $request->get($key, Directions::CURRENT);
+		return $request->get($this->getKey('direction'), Directions::CURRENT);
 	}
 
+	public function resolveUrlFromState(IPage $page = null)
+	{
+		$params  = array();
+		if($page)
+			$params = array($this->getKey('state') => $page->getName());
+		else
+		{
+			$params = array($this->getKey('state') => $this->getLatestState()->getName());
+		}
+		// 
+		return $this->getRouter()->generate(
+			$this->getRoute(),
+			$this->getRouteParameters($params)
+		);
+	}
 	/**
 	 *
 	 */
-	public function resolveUrl($direction)
+	public function resolveUrlFromDirection($direction)
 	{
-		$params  = array('_direction' => $direction);
+		$params  = array($this->getKey('direction') => $direction);
 		// 
 		return $this->getRouter()->generate(
 			$this->getRoute(),
@@ -98,29 +115,33 @@ class UrlResolver
 
 		return $step;
 	}
+
+	public function getLatestState()
+	{
+		$state  = $this->getFlowState();
+		$trails = $state->getTrail();
+
+		if(!$trails || ($trails->count() <= 0))
+		{
+			throw new \Exception('Failed');
+		}
+
+		return $trails->last()->current();
+	}
 	
 	/**
 	 *
 	 */
 	protected function getRouteParameters($params = array())
 	{
-		$direction = $params['_direction'];
-		unset($params['_direction']);
 		$route   = $this->getRouter()->getRouteCollection()->get($this->getRoute());
 		$pattern = $route->getPattern();
 
 
-		if(false !== strpos($pattern, '{'.$this->getPatternKey('state').'}'))
+		// if {state} exists on pattern, fill it with the latest state
+		if(false !== strpos($pattern, '{'.$this->getKey('state').'}'))
 		{
-			$params  = array_merge( $params, array($this->getPatternKey('state') => $this->getStateForDirection($direction)->getName()) );
-		}
-		else if(false !== strpos($pattern, '{'.$this->getPatternKey('direction').'}'))
-		{
-			$params  = array_merge( $params, array($this->getPatternKey('direction') => $direction) );
-		}
-		else
-		{
-			$params  = array_merge( $params, array($this->getKey('direction') => $direction));
+			$params  = array_merge( $params, array($this->getKey('state') => $this->getLatestState()->getName()) );
 		}
 
 		return $params;
@@ -159,25 +180,13 @@ class UrlResolver
 	/**
 	 *
 	 */
-	public function getDirectionKey()
-	{
-		return $this->keys['direction'];
-	}
-	/**
-	 *
-	 */
-	public function setDirectionKey($name)
-	{
-		$this->keys['direction'] = $name;
-	}
 	public function getKey($name)
 	{
 		return $this->keys[$name];
 	}
-
-	public function getPatternKey($key)
+	public function setKey($name, $value)
 	{
-		return $this->patternKeys[$key];
+		$this->keys[$name] = $value;
 	}
 
 	public function setFlowState(IPageFlowState $state)

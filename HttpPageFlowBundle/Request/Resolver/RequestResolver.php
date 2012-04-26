@@ -45,8 +45,12 @@ class RequestResolver
 	 */
 	public function resolveInput(Request $request)
 	{
+		$direction = $this->getUrlResolver()->resolveDirectionFromRequest($request);
+		$state     = $this->getUrlResolver()->resolveStateFromRequest($request);
+		
+		// 
 		return new FlowInput(
-			$this->getUrlResolver()->resolveDirectionFromRequest($request),
+			$direction,
 			$request->query->all()
 		);
 	}
@@ -59,10 +63,16 @@ class RequestResolver
 		return array();
 	}
 
+	/**
+	 *
+	 */
 	public function getUrlResolver()
 	{
 		return $this->urlResolver;
 	}
+	/**
+	 *
+	 */
 	public function setUrlResolver(IUrlResolver $resolver)
 	{
 		$this->urlResolver = $resolver;

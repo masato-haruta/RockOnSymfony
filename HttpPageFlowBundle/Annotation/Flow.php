@@ -48,6 +48,7 @@ class Flow
 	 *
 	 */
 	protected $directionKey;
+	protected $stateKey;
 	/**
 	 *
 	 */
@@ -131,13 +132,22 @@ class Flow
 	}
 
 	// Direction
-	public function setDirectionKey($key)
+	public function setDirectionOnRoute($key)
 	{
 		$this->directionKey  = $key;
 	}
-	public function getDirectionKey()
+	public function getDirectionOnRoute()
 	{
 		return $this->directionKey;
+	}
+	// Direction
+	public function setStateOnRoute($key)
+	{
+		$this->stateKey  = $key;
+	}
+	public function getStateOnRoute()
+	{
+		return $this->stateKey;
 	}
 	// Listener
 	/**

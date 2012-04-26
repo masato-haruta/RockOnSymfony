@@ -14,7 +14,6 @@
 		<parameter key="rock.page_flow.event_dispatcher.class">Symfony\Component\EventDispatcher\EventDispatcher</parameter>
 		<parameter key="rock.page_flow.twig.extensions.class">Rock\OnSymfony\HttpPageFlowBundle\Twig\Extension\HttpPageFlowTwigExtension</parameter>
 
-		<parameter key="rock.page_flow.url.direction_key">d</parameter>
 		<parameter key="rock.page_flow.url.resolver.class">Rock\OnSymfony\HttpPageFlowBundle\Url\Resolver\UrlResolver</parameter>
 		<parameter key="rock.page_flow.request.resolver.class">Rock\OnSymfony\HttpPageFlowBundle\Request\Resolver\RequestResolver</parameter>
 		<parameter key="rock.page_flow.controller.filter.class">Rock\OnSymfony\HttpPageFlowBundle\Controller\ControllerFilterController</parameter>
@@ -84,7 +83,6 @@
 			scope="prototype"
 		>
 			<argument type="service" id="router" />
-			<argument>%rock.page_flow.url.direction_key%</argument>
 		</service>
 		<service
 			id="rock.page_flow.request.resolver"

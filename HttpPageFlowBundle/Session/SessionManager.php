@@ -38,6 +38,8 @@ class SessionManager extends BaseManager
 	public function __construct(Session $session)
 	{
 		$this->session  = $session;
+
+		$this->load();
 	}
 
 	public function load()
@@ -55,9 +57,13 @@ class SessionManager extends BaseManager
 		}
 	}
 
-	protected function doSave(array $sessions)
+	protected function doMount(array $sessions)
 	{
 		$this->session->set(self::SESS_KEY, $sessions);
+	}
+	protected function doUnmount()
+	{
+		$this->session->remove(self::SESS_KEY);
 	}
 }
 

@@ -62,8 +62,8 @@ class HttpPageFlowTwigExtension extends \Twig_Extension
 			$state = $this->getFlowState();
 			$vars  = array_merge($vars, array(
 				'page_current' => $state->getCurrent(), 
-				'page_prev'    => $state->getPrev(),
-				'page_next'    => $state->getNext()
+				'page_prev'    => $state->hasPrev() ? $state->getPrev() : false,
+				'page_next'    => $state->hasNext() ? $state->getNext() : false
 			));
 		}
 		return $vars;	

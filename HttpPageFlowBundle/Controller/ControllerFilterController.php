@@ -85,6 +85,7 @@ class ControllerFilterController
 			}
 			else
 			{
+				// if Response Object is given, then stop
 				$response  = $res;
 				break;
 			}
