@@ -57,7 +57,7 @@ class RequestResolver
 		// Set StateFilter
 		if($stateName)
 		{
-			$input->set('_state', $stateName);
+			$input->setRequestState($stateName);
 		}
 
 		return $input;
