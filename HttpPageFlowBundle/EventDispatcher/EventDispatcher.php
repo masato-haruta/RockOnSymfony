@@ -13,17 +13,21 @@
  * $Copyrights$
  *
  ****/
-
+// <Namespace>
 namespace Rock\OnSymfony\HttpPageFlowBundle\EventDispatcher;
-
-use Symfony\Bundle\FrameworkBundle\Debug\TraceableEventDispatcher as BaseEventDispatcher;
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+// <Base>
+use Symfony\Component\EventDispatcher\EventDispatcher as BaseEventDispatcher;
+// <Use> : Event 
 use Symfony\Component\EventDispatcher\Event;
-class TraceableEventDispatcher extends BaseEventDispatcher
+
+/**
+ *
+ */
+class EventDispatcher extends BaseEventDispatcher
+  implements
+    IStackEventDispatcher
 {
 	protected $delimiter = '.';
-
 	/**
 	 * @override
 	 */
@@ -54,11 +58,5 @@ class TraceableEventDispatcher extends BaseEventDispatcher
 		}
 
 		return $names;
-	}
-
-	public function getDelimiter()
-	{
-		return $this->delimiter;
-	}
-
+	r}
 }

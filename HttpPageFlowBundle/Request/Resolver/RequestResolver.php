@@ -46,13 +46,21 @@ class RequestResolver
 	public function resolveInput(Request $request)
 	{
 		$direction = $this->getUrlResolver()->resolveDirectionFromRequest($request);
-		$state     = $this->getUrlResolver()->resolveStateFromRequest($request);
+		$stateName = $this->getUrlResolver()->resolveStateFromRequest($request);
 		
 		// 
-		return new FlowInput(
+		$input  = new FlowInput(
 			$direction,
 			$request->query->all()
 		);
+
+		// Set StateFilter
+		if($stateName)
+		{
+			$input->set('_state', $stateName);
+		}
+
+		return $input;
 	}
 
 	/**

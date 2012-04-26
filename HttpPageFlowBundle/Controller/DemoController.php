@@ -19,7 +19,7 @@ class DemoController extends Controller
      * @Route("/index", name="rock_demo_default")
      * @Route("/index/{state}", name="rock_demo_default_state")
      * @Template()
-	 * @Flow("Default", route="rock_demo_default_state", directionOnRoute="direction", stateOnRoute="state", onInit="onTestInit", onPageFirst="onFirstOnTest")
+	 * @Flow("Default", route="rock_demo_default_state", directionOnRoute="direction", stateOnRoute="state", onInit="onTestInit", onPageFirst="onFirstOnTest", cleanUrl=true)
      */
     public function indexAction()
     {

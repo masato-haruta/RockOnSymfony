@@ -60,12 +60,15 @@ class Flow
 
 	protected $cleanedListeners;
 
+	protected $bUseClean;
+
 
 	/**
 	 *
 	 */
 	public function __construct(array $values)
 	{
+		$this->bUseClean   = true;
 		$this->owner       = null;
 		$this->listeners   = array();
 		$this->type        = 'DEFAULT';
@@ -212,5 +215,16 @@ class Flow
 	public function getTemplateToken()
 	{
 		return $this->token;
+	}
+
+	public function setCleanUrl($bClean)
+	{
+		if(!is_bool($bClean))
+			throw new \InvalidArgumentException('useClean has to be a boolean.');
+		$this->bUseClean  = $bClean;
+	}
+	public function useCleanUrl()
+	{
+		return $this->bUseClean;
 	}
 }

@@ -11,7 +11,7 @@
 		<parameter key="rock.page_flow.event_listener.class">Rock\OnSymfony\HttpPageFlowBundle\EventListener\FlowListener</parameter>
 		<parameter key="rock.page_flow.session_manager.class">Rock\OnSymfony\HttpPageFlowBundle\Session\SessionManager</parameter>
 
-		<parameter key="rock.page_flow.event_dispatcher.class">Symfony\Component\EventDispatcher\EventDispatcher</parameter>
+		<parameter key="rock.page_flow.event_dispatcher.class">Rock\OnSymfony\HttpPageFlowBundle\EventDispatcher\EventDispatcher</parameter>
 		<parameter key="rock.page_flow.twig.extensions.class">Rock\OnSymfony\HttpPageFlowBundle\Twig\Extension\HttpPageFlowTwigExtension</parameter>
 
 		<parameter key="rock.page_flow.url.resolver.class">Rock\OnSymfony\HttpPageFlowBundle\Url\Resolver\UrlResolver</parameter>

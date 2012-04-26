@@ -25,11 +25,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\Event;
 // <Use> : Flow Event
 use Rock\OnSymfony\HttpPageFlowBundle\Event\PageEvents;
+use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\HandleFlowEvent;
+use Rock\OnSymfony\HttpPageFlowBundle\Event\HandleFlowWithStateEvent;
 
 // <Use> : Flow Components
 use Rock\Components\Flow\State\IFlowState;
 use Rock\Components\Flow\Output\IOutput;
+use Rock\Components\Flow\Directions;
 // <Use> : Page
 use Rock\OnSymfony\HttpPageFlowBundle\Flow\Page;
 
@@ -42,6 +45,7 @@ class PageFlow extends BaseFlow
 {
 	protected $output     = null;
 	protected $dispatcher = null;
+	protected $bUseRedirection = false;
 
 	/**
 	 *
@@ -125,11 +129,16 @@ class PageFlow extends BaseFlow
 	/**
 	 * 
 	 */
-	protected function doInit()
+	protected function doInit(IFlowState $state)
 	{
-		$this->dispatch(PageEvents::ON_INIT, new HandleFlowEvent($this));
+		$this->dispatch(PageEvents::ON_INIT, new HandleFlowWithStateEvent($this, $state));
 
-		parent::doInit();
+		parent::doInit($state);
+
+		if($this->useRedirection() && ($state->getInput()->getDirection() !== Directions::CURRENT))
+		{
+			$this->addListener(PageEvents::EVENT_PREFIX.'.'.PageEvents::ON_PAGE_PREFIX, array($this, 'onPageRedirect'));
+		}
 	}
 	
 	/**
@@ -146,12 +155,12 @@ class PageFlow extends BaseFlow
 	protected function doShutdown(IFlowState $state)
 	{
 		parent::doShutdown($state);
-		$this->dispatch(PageEvents::ON_SHUTDOWN, new HandleFlowEvent($this));
+		$this->dispatch(PageEvents::ON_SHUTDOWN, new HandleFlowWithStateEvent($this, $state));
 	}
 
 	protected function doHandleInput(IFlowState $state)
 	{
-		$this->dispatch(PageEvents::ON_HANDLE_INPUT, new HandleFlowEvent($this));
+		$this->dispatch(PageEvents::ON_HANDLE_INPUT, new HandleFlowWithStateEvent($this, $state));
 		// Set state output as this output
 		$this->allocateOutput($state->getOutput());
 
@@ -160,6 +169,19 @@ class PageFlow extends BaseFlow
 		$this->releaseOutput();
 	}
 
+	protected function doRecoverState(IFlowState $state)
+	{
+		parent::doRecoverState($state);
+
+		$this->dispatch(PageEvents::ON_RECOVER_STATE, new HandleFlowWithStateEvent($this, $state));
+	}
+
+	public function getOutput()
+	{
+		if(!$this->output)
+			throw new \RuntimeException('$output is not allocated on this timing.');
+		return $this->output;
+	}
 	/**
 	 *
 	 */
@@ -213,5 +235,21 @@ class PageFlow extends BaseFlow
 		$this->getPath()->addState($page);
 		
 		return $page;
+	}
+
+	public function setUseRedirection($bUse = true)
+	{
+		$this->bUseRedirection = $bUse;
+	}
+	public function useRedirection()
+	{
+		return $this->bUseRedirection;
+	}
+
+	public function onPageRedirect(IPageEvent $event)
+	{
+		// Redirection is ON
+		$output  = $event->getFlow()->getOutput();
+		$output->setUseRedirection(true);
 	}
 }

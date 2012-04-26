@@ -21,6 +21,8 @@ class PageEvents
 	const ON_SHUTDOWN     = 'page_flow.onShutdown';
 	const ON_PAGE         = 'page_flow.onPage';
 	const ON_HANDLE_INPUT = 'page_flow.onHandleInput';
+
+	const ON_RECOVER_STATE= 'page_flow.onRecover';
 	// 
 	const ON_PAGE_PREFIX  = 'onPage';
 	const EVENT_PREFIX    = 'page_flow';

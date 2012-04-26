@@ -139,7 +139,7 @@ class UrlResolver
 
 
 		// if {state} exists on pattern, fill it with the latest state
-		if(false !== strpos($pattern, '{'.$this->getKey('state').'}'))
+		if((false !== strpos($pattern, '{'.$this->getKey('state').'}')) && !isset($params[$this->getKey('state')]))
 		{
 			$params  = array_merge( $params, array($this->getKey('state') => $this->getLatestState()->getName()) );
 		}

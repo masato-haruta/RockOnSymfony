@@ -48,10 +48,13 @@ use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Template as FlowTemplateConfigu
 
 use Symfony\Component\HttpFoundation\Request;
 use Rock\OnSymfony\HttpPageFlowBundle\State\PageFlowStateProxy;
-
 // <Use> : Flow
 use Rock\Components\Flow\IFlowContainable;
-
+// <Use> : Response
+use Symfony\Component\HttpFoundation\RedirectResponse;
+/**
+ *
+ */
 class FlowListener extends FlowExecuteHandler
 {
 	/**
@@ -271,6 +274,13 @@ class FlowListener extends FlowExecuteHandler
 			$state
 		);
 
+		if($output->useRedirection())
+		{
+			$url  = $this->getUrlResolver()->resolveUrlFromState($output->getTrail()->last()->current());
+
+			return new RedirectResponse($url);
+		}
+
 		$this->getUrlResolver()->setFlowState($output->getState());
 		// apply template value
 		$this->applyTemplateName($request, $output->getState()->getCurrent()->getName());
@@ -359,6 +369,8 @@ class FlowListener extends FlowExecuteHandler
 			}
 		}
 		$flow->setName($this->getFlowConfiguration()->getName());
+		
+		$flow->setUseRedirection($this->getFlowConfiguration()->useCleanUrl());
 	}
 
 
