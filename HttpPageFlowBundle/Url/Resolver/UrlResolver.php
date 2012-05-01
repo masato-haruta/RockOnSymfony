@@ -135,6 +135,13 @@ class UrlResolver
 	protected function getRouteParameters($params = array())
 	{
 		$route   = $this->getRouter()->getRouteCollection()->get($this->getRoute());
+		if(!$route)
+		{
+			throw new \Exception(sprintf(
+				'Could not find route for "%s"',
+				$this->getRoute()
+			));
+		}
 		$pattern = $route->getPattern();
 
 

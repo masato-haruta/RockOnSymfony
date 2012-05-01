@@ -38,8 +38,6 @@ class FormType extends BaseType
 	 */
 	protected function configure()
 	{
-		// Set Alias
-
 		// Set Sub Definitions
 		$this
 			->addPage('input', array($this->getReference(), 'doInput'))

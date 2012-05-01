@@ -32,7 +32,9 @@ use Rock\Component\Flow\Input\IInput;
 class Page extends BasePage
 {
 	/**
-	 *
+	 * @override Rock\Component\Flow\Graph\State\State
+	 * @param IInput
+	 * @return void
 	 */
 	public function handle(IInput $input)
 	{

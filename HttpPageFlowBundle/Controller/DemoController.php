@@ -26,6 +26,16 @@ class DemoController extends Controller
     {
         return array('name' => 'default');
     }
+    /**
+     * @Route("/test", name="rock_demo_test")
+     * @Route("/test/{state}", name="rock_demo_test_state")
+     * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:test/{state}.html.twig")
+	 * @Flow("Demo", route="rock_demo_test_state", directionOnRoute="direction", stateOnRoute="state", cleanUrl=true)
+     */
+    public function testAction()
+    {
+        return array('name' => 'default');
+    }
 
     /**
      * @Route("/form", name="rock_demo_default_form")

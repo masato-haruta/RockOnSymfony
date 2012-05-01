@@ -120,6 +120,12 @@
 		>
 		    <tag name="rock.page_flow.type"/>
 		</service>
+        <service 
+			id="rock.page_flow.template.demo" 
+			class="Rock\OnSymfony\HttpPageFlowBundle\Type\DemoType"
+		>
+		    <tag name="rock.page_flow.type"/>
+		</service>
 
 	</services>
 </container>
