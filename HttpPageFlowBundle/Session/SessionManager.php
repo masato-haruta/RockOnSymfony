@@ -16,7 +16,7 @@
 // <Namespace>
 namespace Rock\OnSymfony\HttpPageFlowBundle\Session;
 // <Base>
-use Rock\Components\Http\Flow\Session\SessionManager as BaseManager;
+use Rock\Component\Http\Flow\Session\SessionManager as BaseManager;
 
 // <Use> : Symfony Session
 use Symfony\Component\HttpFoundation\Session;

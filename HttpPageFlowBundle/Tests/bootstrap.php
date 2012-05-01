@@ -16,4 +16,4 @@ require_once $_SERVER['APP'].'/autoload.php';
 //    }
 //});
 
-require_once __DIR__.'/../../../Components/autoload.php';
+require_once __DIR__.'/../../../Component/autoload.php';

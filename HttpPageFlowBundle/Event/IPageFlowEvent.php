@@ -13,12 +13,16 @@
  * $Copyrights$
  *
  ****/
-
+// @namespace
 namespace Rock\OnSymfony\HttpPageFlowBundle\Event;
 
-
-interface IPageFlowEvent
+/**
+ *
+ */
+interface IPageFlowEvent extends IExecuteEvent
 {
-	public function getFlow();
-
+	/**
+	 *
+	 */
+	function getFlow();
 }

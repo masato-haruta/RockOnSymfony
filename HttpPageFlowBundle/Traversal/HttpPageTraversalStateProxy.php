@@ -14,28 +14,28 @@
  *
  ****/
 // <Namespace>
-namespace Rock\OnSymfony\HttpPageFlowBundle\State;
+namespace Rock\OnSymfony\HttpPageFlowBundle\Traversal;
 // <Interface>
-use Rock\Components\Http\Flow\State\IPageFlowState;
-// <Use> : FlowState
-use Rock\Components\Flow\State\IFlowState;
+use Rock\Component\Http\Flow\Traversal\IHttpPageTraversalState;
+// <Use> : TraversalState
+use Rock\Component\Flow\Traversal\ITraversalState;
 // <Use> : Directions
-use Rock\Components\Flow\Directions;
+use Rock\Component\Flow\Directions;
 use Rock\OnSymfony\HttpPageFlowBundle\Url\Resolver\IUrlResolver;
 
 /**
- * PageFlowState <<Proxy>>
+ * PageTraversalState <<Proxy>>
  *   
- * This State class overwrap actual State, and convert all parameters for Http Access.  
+ * This Traversal class overwrap actual State, and convert all parameters for Http Access.  
  */
-class PageFlowStateProxy 
+class HttpPageTraversalStateProxy 
   implements
-	IPageFlowState
+	IHttpPageTraversalState
 {
 	/**
-	 * Original State, or Unfreezed State
+	 * Original Traversal, or Unfreezed Traversal
 	 *
-	 * @var IFlowState
+	 * @var ITraversalState
 	 */
 	protected $source;
 	/**
@@ -46,9 +46,9 @@ class PageFlowStateProxy
 	/**
 	 *
 	 */
-	public function __construct(IFlowState $state, IUrlResolver $resolver)
+	public function __construct(ITraversalState $traversal, IUrlResolver $resolver)
 	{
-		$this->source   = $state;
+		$this->source   = $traversal;
 		$this->urlResolver = $resolver;
 	}
 

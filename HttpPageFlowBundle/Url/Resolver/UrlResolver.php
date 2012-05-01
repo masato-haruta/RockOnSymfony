@@ -17,13 +17,13 @@
 namespace Rock\OnSymfony\HttpPageFlowBundle\Url\Resolver;
 // <Use> : Symfony Request
 use Symfony\Component\HttpFoundation\Request;
-use Rock\Components\Flow\Directions;
+use Rock\Component\Flow\Directions;
 
 use Symfony\Component\Routing\RouterInterface;
 //
-use Rock\Components\Http\Flow\State\IPageFlowState;
+use Rock\Component\Http\Flow\Traversal\IPageTraversalState;
 // <Use>
-use Rock\Components\Http\Flow\IPage;
+use Rock\Component\Http\Flow\IPage;
 /**
  *
  */
@@ -35,7 +35,7 @@ class UrlResolver
 	protected $route;
 	protected $keys = array();
 
-	protected $state;
+	protected $traversal;
 
 	/**
 	 *
@@ -97,7 +97,7 @@ class UrlResolver
 
 	public function getStateForDirection($direction)
 	{
-		$flowState  = $this->getFlowState();
+		$flowState  = $this->getTraversal();
 
 		switch($direction)
 		{
@@ -118,8 +118,8 @@ class UrlResolver
 
 	public function getLatestState()
 	{
-		$state  = $this->getFlowState();
-		$trails = $state->getTrail();
+		$traversal  = $this->getTraversal();
+		$trails = $traversal->getTrail();
 
 		if(!$trails || ($trails->count() <= 0))
 		{
@@ -189,16 +189,16 @@ class UrlResolver
 		$this->keys[$name] = $value;
 	}
 
-	public function setFlowState(IPageFlowState $state)
+	public function setTraversal(IHtttpPageTraversalState $traversal)
 	{
-		$this->state  = $state;
+		$this->traversal  = $traversal;
 	}
 
-	public function getFlowState()
+	public function getTraversal()
 	{
-		if(!$this->state)
-			throw new \Exception('State is not specified.');
-		return $this->state;
+		if(!$this->traversal)
+			throw new \Exception('Traversal is not specified.');
+		return $this->traversal;
 	}
 
 }

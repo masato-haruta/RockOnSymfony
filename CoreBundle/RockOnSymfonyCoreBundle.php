@@ -13,9 +13,9 @@ class RockOnSymfonyCoreBundle extends Bundle
 {
 	public function boot()
 	{
-		$this->registRockComponents($this->container);
+		$this->registRockComponent($this->container);
 	}
-	protected function registRockComponents(ContainerInterface $container)
+	protected function registRockComponent(ContainerInterface $container)
 	{
 		$loaderFile  = $container->getParameter('rock.packages.loader.location');
 		if(!file_exists($loaderFile))
@@ -24,15 +24,15 @@ class RockOnSymfonyCoreBundle extends Bundle
 		}
 		require_once($loaderFile);
 
-		$loader  = new \Rock\Components\Core\Loader\PackageLoader();
+		$loader  = new \Rock\Component\Core\Loader\PackageLoader();
 
-		$loader->setNamespacePrefix('Rock\\Components');
+		$loader->setNamespacePrefix('Rock\\Component');
 		$loader->loadPackageFile($container->getParameter('rock.packages.defaults'));
 
 		$loader->register();
 
 
-		if(!class_exists('\\Rock\\Components\\Core\\Rock'))
+		if(!class_exists('\\Rock\\Component\\Core\\Rock'))
 			throw new \Exception('Failed to regist');
 	}
 }

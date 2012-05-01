@@ -16,7 +16,7 @@
             <tag name="twig.extension"/>
         </service>
 
-		<!-- Fix Twig Components Twig -->
+		<!-- Fix Twig Component Twig -->
         <service id="twig.compiler" class="%twig.compiler.class%">
 			<argument type="service" id="twig"/>
         </service>

@@ -21,8 +21,8 @@ use Symfony\Component\EventDispatcher\Event;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;
 
 // <Use>
-use Rock\Components\Flow\IFlow;
-use Rock\Components\Http\Flow\IPage;
+use Rock\Component\Flow\IFlow;
+use Rock\Component\Http\Flow\IPage;
 
 /**
  *

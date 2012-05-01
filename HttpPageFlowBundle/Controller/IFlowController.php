@@ -19,8 +19,8 @@
  ************************************************************************************/
 namespace Rock\OnSymfony\HttpPageFlowBundle\Controller;
 
-// <Use> : Flow Components
-use Rock\Components\Flow\IFlow;
+// <Use> : Flow Component
+use Rock\Component\Flow\IFlow;
 /**
  *
  */

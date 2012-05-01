@@ -15,12 +15,14 @@
  ****/
 namespace Rock\OnSymfony\HttpPageFlowBundle\Factory;
 // <Base>
-use Rock\Components\Http\Flow\Factory\Factory;
+use Rock\Component\Http\Flow\Factory\Factory;
 
 // <Use>
 use Symfony\Component\DependencyInjection\ContainerInterface;
 // <Use> : Type
 use Rock\OnSymfony\HttpPageFlowBundle\Type\DefaultType;
+// <Use> : EventDispatcherInterface
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 
 class FlowFactory extends Factory
@@ -38,13 +40,21 @@ class FlowFactory extends Factory
 		//parent::__construct($manager);
 		parent::__construct($container->get('rock.page_flow.session_manager'));
 		
-		$this->container = $container;
+		$this->container    = $container;
+
+		$this->builderClass = $container->hasParameter('rock.page_flow.defaults.builder.class') ? 
+			$container->getParameter('rock.page_flow.defaults.builder.class') :
+			'\\Rock\\OnSymfony\\HttpPageFlowBundle\\Builder\\Builder';
 	}
 
+	/**
+	 *
+	 */
 	protected function init()
 	{
-		$this->defaultType  = new DefaultType();
+		$this->defaultTypeClass  = '\\Rock\\OnSymfony\\HttpPageFlowBundle\\Type\\DefaultType'; 
 	}
+
 	/**
 	 *
 	 */
@@ -52,6 +62,7 @@ class FlowFactory extends Factory
 	{
 		return $this->container->get('rock.page_flow.event_dispatcher');
 	}
+
 	/**
 	 *
 	 */
@@ -59,9 +70,26 @@ class FlowFactory extends Factory
 	{
 		$flow = parent::create($name);
 		
-		$flow->setEventDispatcher($this->getEventDispatcher());
+		if($flow instanceof EventDispatcherInterface)
+		{
+			$flow->setEventDispatcher($this->getEventDispatcher());
+		}
 
 		return $flow;
+	}
+
+	/** 
+	 *
+	 */
+	public function createBuilder($type = null)
+	{
+		$builder = parent::createBuilder($type);
+
+		if($builder instanceof EventDispatcherInterface)
+		{
+			$builder->setEventDispatcher($this->getEventDispatcher());
+		}
+		return $builder;
 	}
 }
 

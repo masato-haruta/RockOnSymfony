@@ -6,8 +6,8 @@
   <parameters>
     <!-- Not Supported Yet -->
     <parameter key="rock.packages.loader.location">%rock.core.dir%/src/Core/Loader/PackageLoader.php</parameter>
-    <parameter key="rock.packages.loader.class">Rock\Components\Core\Loader\PackageLoader</parameter>
-	<parameter key="rock.packages.prefix.default">Rock\Components</parameter>
+    <parameter key="rock.packages.loader.class">Rock\Component\Core\Loader\PackageLoader</parameter>
+	<parameter key="rock.packages.prefix.default">Rock\Component</parameter>
     <parameter key="rock.packages.defaults">%rock.core.dir%/all.packages</parameter>
   </parameters>
 </container>

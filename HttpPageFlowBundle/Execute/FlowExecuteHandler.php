@@ -18,9 +18,9 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\Execute;
 // <Use> : WebPage Flow Resolvers
 use Rock\OnSymfony\HttpPageFlowBundle\Url\Resolver\IUrlResolver;
 use Rock\OnSymfony\HttpPageFlowBundle\Request\Resolver\IRequestResolver;
-// <Use> : Flow Components
-use Rock\Components\Flow\IFlow;
-use Rock\Components\Flow\Builder\IFlowBuilder;
+// <Use> : Flow Component
+use Rock\Component\Flow\IFlow;
+use Rock\Component\Flow\Builder\IFlowBuilder;
 
 // <Use> : Request
 use Symfony\Component\HttpFoundation\Request;
@@ -36,10 +36,6 @@ class FlowExecuteHandler
 	 */
 	protected $requestResolver;
 
-	/**
-	 *
-	 */
-	protected $builder;
 	/**
 	 *
 	 */
@@ -70,20 +66,6 @@ class FlowExecuteHandler
 		return $output->all();
 	}
 
-	/**
-	 *
-	 */
-	public function getBuilder()
-	{
-		return $this->builder;
-	}
-	/**
-	 *
-	 */
-	public function setBuilder(IFlowBuilder $builder)
-	{
-		$this->builder = $builder;
-	}
 	/**
 	 *
 	 */

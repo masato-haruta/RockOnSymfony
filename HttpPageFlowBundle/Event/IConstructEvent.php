@@ -15,16 +15,13 @@
  ****/
 // @namespace
 namespace Rock\OnSymfony\HttpPageFlowBundle\Event;
+// @base
+use Rock\OnSymfony\HttpPageFlowBundle\Event\IEvent;
 
 /**
- *
+ * TypeSafeInterface
+ *   Event for Construction Phase
  */
-interface IPageEvent extends IPageFlowEvent
+interface IConstructEvent extends IEvent
 {
-	/**
-	 *
-	 */
-	function getPage();
 }
-
-

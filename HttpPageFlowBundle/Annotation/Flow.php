@@ -19,7 +19,7 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\Annotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
 
 // <Use> : Event
-use Rock\OnSymfony\HttpPageFlowBundle\Event\PageEvents;
+use Rock\OnSymfony\HttpPageFlowBundle\Event\Resolver\EventNameResolver;
 
 /**
  * @Annotation
@@ -29,37 +29,50 @@ class Flow
     ConfigurationInterface
 {
 	/**
-	 *
+	 * @var
 	 */
 	protected $owner;
 	/**
-	 *
+	 * @var
 	 */
 	protected $value;
 	/**
-	 *
+	 * @var
 	 */
 	protected $name;
 	/**
-	 *
+	 * @var
 	 */
 	protected $route;
 	/**
-	 *
+	 * @var
 	 */
 	protected $directionKey;
+	/**
+	 * @var
+	 */
 	protected $stateKey;
 	/**
-	 *
+	 * @var
 	 */
 	protected $token;
 	/**
-	 *
+	 * @var
 	 */
 	protected $listeners;
 
-	protected $cleanedListeners;
+	/**
+	 * @var
+	 */
+	protected $builderListeners;
+	/**
+	 * @var
+	 */
+	protected $flowListeners;
 
+	/**
+	 * @var
+	 */
 	protected $bUseClean;
 
 
@@ -161,26 +174,48 @@ class Flow
 		$this->listeners[$eventname]  = $value;
 	}
 
+	/**
+	 *
+	 */
 	protected function cleanListeners()
 	{
-		$this->cleanedListeners  = array();
+		$this->flowListeners  = array();
+		$this->builderListeners  = array();
 		foreach($this->listeners as $eventname => $listener)
 		{
-			$eventname = PageEvents::fromOnName($eventname);
+			$eventname = EventNameResolver::resolve($eventname);
 			
-			$this->cleanedListeners[$eventname]  = array($this->getListenerOwner(), $listener);
+			if(false === strpos($eventname, 'builder'))
+			{
+				$this->flowListeners[$eventname]  = array($this->getListenerOwner(), $listener);
+			}
+			else
+			{
+				$this->builderListeners[$eventname] = array($this->getListenerOwner(), $listener);
+			}
 		}
 	}
 	/**
 	 *
 	 */
-	public function getListeners()
+	public function getBuilderListeners()
 	{
-		if(!$this->cleanedListeners)
+		if(!$this->builderListeners)
 		{
 			$this->cleanListeners();
 		}
-		return $this->cleanedListeners;
+		return $this->builderListeners;
+	}
+	/**
+	 *
+	 */
+	public function getFlowListeners()
+	{
+		if(!$this->flowListeners)
+		{
+			$this->cleanListeners();
+		}
+		return $this->flowListeners;
 	}
 
 	// Route

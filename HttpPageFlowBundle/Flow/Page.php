@@ -16,7 +16,7 @@
 // <Namespace>
 namespace Rock\OnSymfony\HttpPageFlowBundle\Flow;
 // <Base>
-use Rock\Components\Http\Flow\Page as BasePage;
+use Rock\Component\Http\Flow\Page as BasePage;
 
 // <Use> : EventDispatcher
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -24,7 +24,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\PageEvents;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\HandlePageEvent;
 // <Use> : Input
-use Rock\Components\Flow\Input\IInput;
+use Rock\Component\Flow\Input\IInput;
 
 /**
  *

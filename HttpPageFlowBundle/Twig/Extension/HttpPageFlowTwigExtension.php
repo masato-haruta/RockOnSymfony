@@ -19,8 +19,8 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\Twig\Extension;
 use Symfony\Component\HttpFoundation\Request;
 
 // 
-use Rock\Components\Http\Flow\State\IPageFlowState;
-use Rock\OnSymfony\HttpPageFlowBundle\State\IFlowStateStack;
+use Rock\Component\Http\Flow\Traversal\IHttpPageTraversalState;
+use Rock\OnSymfony\HttpPageFlowBundle\Traversal\ITraversalStack;
 
 /**
  *
@@ -33,7 +33,7 @@ class HttpPageFlowTwigExtension extends \Twig_Extension
 	/**
 	 *
 	 */
-	public function __construct(IFlowStateStack $stack)
+	public function __construct(ITraversalStack $stack)
 	{
 		$this->stack = $stack;
 	}
@@ -57,9 +57,9 @@ class HttpPageFlowTwigExtension extends \Twig_Extension
 			'page_prev'   => false,
 		);
 
-		if($this->hasFlowState())
+		if($this->hasTraversalState())
 		{
-			$state = $this->getFlowState();
+			$state = $this->getTraversalState();
 			$vars  = array_merge($vars, array(
 				'page_current' => $state->getCurrent(), 
 				'page_prev'    => $state->hasPrev() ? $state->getPrev() : false,
@@ -72,20 +72,20 @@ class HttpPageFlowTwigExtension extends \Twig_Extension
 	/**
 	 *
 	 */
-	public function getFlowState()
+	public function getTraversalState()
 	{
-		return $this->getStateStack()->top();
+		return $this->getTraversalStack()->top();
 	}
 
 	/**
 	 *
 	 */
-	public function hasFlowState()
+	public function hasTraversalState()
 	{
-		return $this->getStateStack()->count() > 0;
+		return $this->getTraversalStack()->count() > 0;
 	}
 
-	protected function getStateStack()
+	protected function getTraversalStack()
 	{
 		return $this->stack;
 	}

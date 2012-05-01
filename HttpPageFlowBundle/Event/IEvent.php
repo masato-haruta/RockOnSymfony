@@ -13,14 +13,14 @@
  * $Copyrights$
  *
  ****/
-namespace Rock\OnSymfony\CoreBundle;
-
-use Rock\Component\Core\Rock as BaseRock;
+// @namespace
+namespace Rock\OnSymfony\HttpPageFlowBundle\Event;
+// @base
+use Rock\OnSymfony\HttpPageFlowBundle\Event\IEvent;
 
 /**
- * Dammy
+ * TypeSafeInterface
  */
-class Rock extends BaseRock
+interface IEvent
 {
-	
 }

@@ -13,12 +13,13 @@
  * $Copyrights$
  *
  ****/
+// <Namespace>
 namespace Rock\OnSymfony\HttpPageFlowBundle\Flow;
-
-// 
-use Rock\Components\Http\Flow\PageFlow as BaseFlow;
-// <Use> : EventDispatcher
+// <Base> 
+use Rock\Component\Http\Flow\PageFlow as BaseFlow;
+// <Interface>
 use Rock\OnSymfony\HttpPageFlowBundle\EventDispatcher\IEventDispatcherAware;
+// <Use> : EventDispatcher
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -27,12 +28,12 @@ use Symfony\Component\EventDispatcher\Event;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\PageEvents;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\HandleFlowEvent;
-use Rock\OnSymfony\HttpPageFlowBundle\Event\HandleFlowWithStateEvent;
+use Rock\OnSymfony\HttpPageFlowBundle\Event\HandleFlowWithTraversalEvent;
 
-// <Use> : Flow Components
-use Rock\Components\Flow\State\IFlowState;
-use Rock\Components\Flow\Output\IOutput;
-use Rock\Components\Flow\Directions;
+// <Use> : Flow Component
+use Rock\Component\Flow\Traversal\ITraversalState;
+use Rock\Component\Flow\Output\IOutput;
+use Rock\Component\Flow\Directions;
 // <Use> : Page
 use Rock\OnSymfony\HttpPageFlowBundle\Flow\Page;
 
@@ -129,9 +130,9 @@ class PageFlow extends BaseFlow
 	/**
 	 * 
 	 */
-	protected function doInit(IFlowState $state)
+	protected function doInit(ITraversalState $state)
 	{
-		$this->dispatch(PageEvents::ON_INIT, new HandleFlowWithStateEvent($this, $state));
+		$this->dispatch(PageEvents::ON_INIT, new HandleFlowWithTraversalEvent($this, $state));
 
 		parent::doInit($state);
 
@@ -152,15 +153,15 @@ class PageFlow extends BaseFlow
 	/**
 	 * 
 	 */
-	protected function doShutdown(IFlowState $state)
+	protected function doShutdown(ITraversalState $state)
 	{
 		parent::doShutdown($state);
-		$this->dispatch(PageEvents::ON_SHUTDOWN, new HandleFlowWithStateEvent($this, $state));
+		$this->dispatch(PageEvents::ON_SHUTDOWN, new HandleFlowWithTraversalEvent($this, $state));
 	}
 
-	protected function doHandleInput(IFlowState $state)
+	protected function doHandleInput(ITraversalState $state)
 	{
-		$this->dispatch(PageEvents::ON_HANDLE_INPUT, new HandleFlowWithStateEvent($this, $state));
+		$this->dispatch(PageEvents::ON_HANDLE_INPUT, new HandleFlowWithTraversalEvent($this, $state));
 		// Set state output as this output
 		$this->allocateOutput($state->getOutput());
 
@@ -169,11 +170,11 @@ class PageFlow extends BaseFlow
 		$this->releaseOutput();
 	}
 
-	protected function doRecoverState(IFlowState $state)
+	protected function doRecoverTraversal(ITraversalState $state)
 	{
-		parent::doRecoverState($state);
+		parent::doRecoverTraversal($state);
 
-		$this->dispatch(PageEvents::ON_RECOVER_STATE, new HandleFlowWithStateEvent($this, $state));
+		$this->dispatch(PageEvents::ON_RECOVER_STATE, new HandleFlowWithTraversalEvent($this, $state));
 	}
 
 	public function getOutput()
@@ -232,7 +233,7 @@ class PageFlow extends BaseFlow
 	protected function createPage($name, $listener)
 	{
 		$page   = new Page($this->getPath(), $name, $listener);
-		$this->getPath()->addState($page);
+		$this->getPath()->addVertex($page);
 		
 		return $page;
 	}

@@ -24,17 +24,22 @@ class FlowTypeCompilerPass
   implements 
     CompilerPassInterface
 {
+	/** 
+	 *
+	 */
 	public function process(ContainerBuilder $container)
 	{
-		if(false === $container->hasDefinition('rock.page_flow.factory'))
+		// Get Factory Definition
+		if(false === $container->hasDefinition('rock.page_flow.container'))
 		{
 			return;
 		}
-		$definition = $container->getDefinition('rock.page_flow.factory');
+		$definition = $container->getDefinition('rock.page_flow.container');
 
+		// Add types into Factory
 		foreach($container->findTaggedServiceIds('rock.page_flow.type') as $id => $attributes)
 		{
-			$definition->addMethodCall('addType', array(new Reference($id)));
+			$definition->addMethodCall('addDefinition', array(new Reference($id)));
 		}
 	}
 }

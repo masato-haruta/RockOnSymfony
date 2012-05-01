@@ -19,9 +19,9 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\Controller;
 // <Base>
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 // <Interface> 
-use Rock\Components\Flow\IFlowContainable;
+use Rock\Component\Flow\IFlowContainable;
 // <Use> : Flow Component
-use Rock\Components\Flow\IFlow;
+use Rock\Component\Flow\IFlow;
 
 abstract class FlowController extends Controller
   implements

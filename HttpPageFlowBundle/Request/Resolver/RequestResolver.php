@@ -20,7 +20,7 @@ use Rock\OnSymfony\HttpPageFlowBundle\Request\Resolver\IRequestResolver;
 // <Use> : Symfony Http Request
 use Symfony\Component\HttpFoundation\Request;
 // <Use> : Flow HttpInput
-use Rock\Components\Http\Flow\Input\Input as FlowInput;
+use Rock\Component\Http\Flow\Input\Input as FlowInput;
 // <Use> : UrlResolver
 use Rock\OnSymfony\HttpPageFlowBundle\Url\Resolver\IUrlResolver;
 

@@ -5,9 +5,12 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
 	<parameters>
-		<parameter key="rock.page_flow.factory.class">Rock\OnSymfony\HttpPageFlowBundle\Factory\FlowFactory</parameter>
-		<parameter key="rock.page_flow.builtin_types.class">Rock\OnSymfony\HttpPageFlowBundle\Type\BuiltinTypes</parameter>
-		<parameter key="rock.page_flow.state_stack.class">Rock\OnSymfony\HttpPageFlowBundle\State\FlowStateStack</parameter>
+		<parameter key="rock.page_flow.component_builder.class">Rock\OnSymfony\HttpPageFlowBundle\Definition\Builder</parameter>
+		<parameter key="rock.page_flow.container.class">Rock\OnSymfony\HttpPageFlowBundle\Definition\Container</parameter>
+
+		<parameter key="rock.page_flow.template.default.class">Rock\OnSymfony\HttpPageFlowBundle\Type\DefaultType</parameter>
+		<parameter key="rock.page_flow.template.form.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormType</parameter>
+		<parameter key="rock.page_flow.state_stack.class">Rock\OnSymfony\HttpPageFlowBundle\Traversal\TraversalStack</parameter>
 		<parameter key="rock.page_flow.event_listener.class">Rock\OnSymfony\HttpPageFlowBundle\EventListener\FlowListener</parameter>
 		<parameter key="rock.page_flow.session_manager.class">Rock\OnSymfony\HttpPageFlowBundle\Session\SessionManager</parameter>
 
@@ -26,13 +29,6 @@
 			class="%rock.page_flow.state_stack.class%"
 		>
 		</service>
-        <!-- Flow Template Factory -->
-        <service 
-			id="rock.page_flow.builtin_types" 
-			class="%rock.page_flow.builtin_types.class%"
-		>
-		    <tag name="rock.page_flow.type"/>
-		</service>
 
 		<!--  -->
 		<service 
@@ -41,14 +37,20 @@
 		>
 			<argument type="service" id="session"/>	
 		</service>
-        <!-- Flow Builder -->
+        <!-- Flow Container -->
 		<service 
-			id="rock.page_flow.factory" 
-			class="%rock.page_flow.factory.class%"
+			id="rock.page_flow.component_builder" 
+			class="%rock.page_flow.component_builder.class%"
+		>
+		</service>
+		<service 
+			id="rock.page_flow.container" 
+			class="%rock.page_flow.container.class%"
 		>
 			<!--<argument type="service" id="rock.page_flow.session_manager"/>-->
-			<argument type="service" id="service_container"/>
-			<tag neme="rock.page_flow.factory"/>
+			<call method="setComponentBuilder">
+			  <argument type="service" id="rock.page_flow.component_builder"/>
+			</call>
 		</service>
 		
 		<!-- Kernel EventListener -->
@@ -104,5 +106,20 @@
 		>
 			<argument type="service" id="controller_resolver"/>
 		</service>
+
+        <!-- Regist Flow Templates -->
+        <service 
+			id="rock.page_flow.template.default" 
+			class="%rock.page_flow.template.default.class%"
+		>
+		    <tag name="rock.page_flow.type"/>
+		</service>
+        <service 
+			id="rock.page_flow.template.form" 
+			class="%rock.page_flow.template.form.class%"
+		>
+		    <tag name="rock.page_flow.type"/>
+		</service>
+
 	</services>
 </container>

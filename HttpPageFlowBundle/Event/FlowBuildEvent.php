@@ -13,37 +13,37 @@
  * $Copyrights$
  *
  ****/
-// <Namespace>
+// @namespace
 namespace Rock\OnSymfony\HttpPageFlowBundle\Event;
-// <Base>
+// @extend
 use Symfony\Component\EventDispatcher\Event;
+// @use
+use Rock\Component\Flow\Builder\IFlowBuilder;
 
-// <Use> :Flow 
-use Rock\Component\Flow\IFlow;
-/**
+/** 
  *
  */
-class HandleFlowEvent extends Event
+class FlowBuildEvent extends Event
   implements
-    IPageFlowEvent
+    IConstructEvent
 {
 	/**
 	 *
 	 */
-	protected $flow;
+	protected $builder;
 
 	/**
 	 *
 	 */
-	public function __construct(IFlow $flow)
+	public function __construct(IFlowBuilder $builder)
 	{
-		$this->flow  = $flow;
+		$this->builder  = $builder;
 	}
 	/**
 	 *
 	 */
-	public function getFlow()
+	public function getBuilder()
 	{
-		return $this->flow;
+		return $this->builder;
 	}
 }

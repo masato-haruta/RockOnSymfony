@@ -17,24 +17,24 @@
 namespace Rock\OnSymfony\HttpPageFlowBundle\Event;
 
 //
-use Rock\Components\Flow\IFlow;
-use Rock\Components\Flow\State\IFlowState;
+use Rock\Component\Flow\IFlow;
+use Rock\Component\Flow\Traversal\ITraversalState;
 /**
  *
  */
-class HandleFlowWithStateEvent extends HandleFlowEvent
+class HandleFlowWithTraversalEvent extends HandleFlowEvent
 {
-	protected $state;
+	protected $traversal;
 
-	public function __construct(IFlow $flow, IFlowState $state)
+	public function __construct(IFlow $flow, ITraversalState $traversal)
 	{
 		parent::__construct($flow);
 
-		$this->state  = $state;
+		$this->traversal  = $traversal;
 	}
 
-	public function getState()
+	public function getTraversal()
 	{
-		return $this->state;
+		return $this->traversal;
 	}
 }

@@ -35,7 +35,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 // 
-use Rock\Components\Flow\IFlow;
+use Rock\Component\Flow\IFlow;
 // <Use> : WebPage Flow Controller 
 use Rock\OnSymfony\HttpPageFlowBundle\Controller\ControllerFilterController;
 // <Use> : Annotation Configuration
@@ -47,9 +47,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template as TemplateConfigu
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Template as FlowTemplateConfiguration;
 
 use Symfony\Component\HttpFoundation\Request;
-use Rock\OnSymfony\HttpPageFlowBundle\State\PageFlowStateProxy;
+use Rock\OnSymfony\HttpPageFlowBundle\Traversal\HttpPageTraversalStateProxy;
 // <Use> : Flow
-use Rock\Components\Flow\IFlowContainable;
+use Rock\Component\Flow\IFlowContainable;
 // <Use> : Response
 use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
@@ -86,7 +86,6 @@ class FlowListener extends FlowExecuteHandler
 	public function __construct(ContainerInterface $container)
 	{
 		$this->container = $container;
-		$this->builder   = null;
 
 		if($this->container->has('rock.page_flow.url.resolver'))
 		{
@@ -106,7 +105,7 @@ class FlowListener extends FlowExecuteHandler
 
 	public function onKernelResponse(FilterResponseEvent $event)
 	{
-		$this->getStateStack()->pop();
+		$this->getTraversalStack()->pop();
 	}
 	/**
      * @param FilterControllerEvent $event A FilterControllerEvent instance
@@ -194,6 +193,7 @@ class FlowListener extends FlowExecuteHandler
 	{
 		return !is_null($this->flowConfiguration);
 	}
+
 	/**
 	 *
 	 */
@@ -202,7 +202,7 @@ class FlowListener extends FlowExecuteHandler
 
 		$this->flowConfiguration  = $configuration;
 		// Initialize FlowBuilder Settings
-		$this->initBuilder();
+		$this->initContainer();
 
 		// Initialize Resolver Settings
 		$this->initResolverSetting();
@@ -252,7 +252,8 @@ class FlowListener extends FlowExecuteHandler
 	public function handleFlow(Request $request)
 	{
 		//
-		$flow  = $this->getBuilder()->build($this->getFlowConfiguration()->getValue());
+		$flowContainer  = $this->container->get('rock.page_flow.container');
+		$flow  = $flowContainer->getByAlias($this->getFlowConfiguration()->getValue());
 		$this->setFlowOnOriginal($flow);
 
 		// Set Flow instance as flow, so action parameter can solve $flow
@@ -265,14 +266,21 @@ class FlowListener extends FlowExecuteHandler
 		//{
 		//	$controller->setFlow($flow);
 		//}
-
-		$state   = $flow->createFlowState();
+	
+		$state   = $flow->createTraversalState();
 		
 		$input   = $this->getRequestResolver()->resolveInput($request);
-		$output  = $flow->handle(
-			$input,
-			$state
-		);
+		try
+		{
+			$output  = $flow->handle(
+				$input,
+				$state
+			);
+		}
+		catch(\Exception $ex)
+		{
+			throw $ex;
+		}
 
 		if($output->useRedirection())
 		{
@@ -281,18 +289,18 @@ class FlowListener extends FlowExecuteHandler
 			return new RedirectResponse($url);
 		}
 
-		$this->getUrlResolver()->setFlowState($output->getState());
+		$this->getUrlResolver()->setTraversal($output->getTraversal());
 		// apply template value
-		$this->applyTemplateName($request, $output->getState()->getCurrent()->getName());
+		$this->applyTemplateName($request, $output->getTraversal()->getCurrent()->getName());
 
 		// state proxy
-		$state   = new PageFlowStateProxy(
-			$output->getState(),
+		$state   = new HttpPageTraversalStateProxy(
+			$output->getTraversal(),
 			$this->getUrlResolver()
 		);
 
 		// Into scope, this scope will be poped when the Kernel::RESPONSE is handled
-		$this->getStateStack()->push($state);
+		$this->getTraversalStack()->push($state);
 
 		return $output->all();
 	}
@@ -329,12 +337,23 @@ class FlowListener extends FlowExecuteHandler
 	/**
 	 *
 	 */
-	protected function initBuilder()
+	protected function initContainer()
 	{
-		// 
-		$factory = $this->container->get('rock.page_flow.factory');
+		$config   = $this->getFlowConfiguration();
 
-		$this->setBuilder($factory->createBuilder($this->getFlowConfiguration()->getValue()));
+		//
+		{
+			// Update Builder with Listener
+			$builder    = $this->container->get('rock.page_flow.component_builder');
+			// Initialize EventDispatcher for this flow
+			$builder->setEventDispatcher($this->container->get('rock.page_flow.event_dispatcher'));
+
+			// Regist Builder Listeners
+			foreach($config->getBuilderListeners() as $eventname => $listener)
+			{
+				$builder->addListener($eventname, $listener);
+			}
+		}
 	}
 
 	/**
@@ -361,16 +380,21 @@ class FlowListener extends FlowExecuteHandler
 	 */
 	protected function initFlowSetting(IFlow $flow)
 	{
+		// 
 		if($flow instanceof EventDispatcherInterface)
 		{
-			foreach($this->getFlowConfiguration()->getListeners() as $eventname => $listener)
+			foreach($this->getFlowConfiguration()->getFlowListeners() as $eventname => $listener)
 			{
 				$flow->addListener($eventname, $listener);
 			}
 		}
+		//
 		$flow->setName($this->getFlowConfiguration()->getName());
-		
+		//
 		$flow->setUseRedirection($this->getFlowConfiguration()->useCleanUrl());
+
+		// 
+		$flow->setSessionManager($this->container->get('rock.page_flow.session_manager'));
 	}
 
 
@@ -385,7 +409,7 @@ class FlowListener extends FlowExecuteHandler
 	/**
 	 *
 	 */
-	public function getStateStack()
+	public function getTraversalStack()
 	{
 		return $this->container->get('rock.page_flow.state_stack');
 	}

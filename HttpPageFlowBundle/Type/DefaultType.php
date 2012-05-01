@@ -13,23 +13,25 @@
  * $Copyrights$
  *
  ****/
-// <Namespace>
+// @namespace
 namespace Rock\OnSymfony\HttpPageFlowBundle\Type;
-// <Use>
-use Rock\Components\Http\Flow\Type\DefaultType as BaseType;
-// <Use> : Builder
-use Rock\Components\Http\Flow\Builder\Builder;
-use Rock\Components\Flow\Factory\IFactory;
+// @extends
+use Rock\OnSymfony\HttpPageFlowBundle\Type\BaseType;
 
 /**
- *
+ * Type of Default Flow on Symfony.
+ * Extends Base Flow Type, and Flow Definition, which containes the logic of initialize Default flow 
+ * 
  */
 class DefaultType extends BaseType
 {
-	public function getBuilder(IFactory $factory)
+	/**
+	 *
+	 */
+	public function __construct()
 	{
-		$factory->addTemplate('default', '\\Rock\\OnSymfony\\HttpPageFlowBundle\\Flow\PageFlow');
-
-		return new Builder($factory);
+		parent::__construct('rock.flow.template.default');
+		
+		$this->setAttribute('alias', 'Default');
 	}
 }

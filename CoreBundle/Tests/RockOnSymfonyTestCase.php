@@ -21,9 +21,9 @@ use \PHPUnit_Framework_TestCase as TestCase;
 class RockOnSymfonyTestCase extends TestCase
 {
 
-	protected function loadComponents()
+	protected function loadComponent()
 	{
-		$rockBaseDir  = __DIR__.'/../../../Components/src';
+		$rockBaseDir  = __DIR__.'/../../../Component/src';
 		$loaderFile   = $rockBaseDir.'/Core/Loader/PackageLoader.php';
 		if(!file_exists($loaderFile))
 		{
@@ -31,14 +31,14 @@ class RockOnSymfonyTestCase extends TestCase
 		}
 		require_once($loaderFile);
 
-		$loader  = new Rock\Components\Core\Loader\PackageLoader();
+		$loader  = new Rock\Component\Core\Loader\PackageLoader();
 
-		$loader->setNamespacePrefix('Rock\\Components');
+		$loader->setNamespacePrefix('Rock\\Component');
 		$loader->loadPackageFile($rockBaseDir.'/all.packages');
 
 		$loader->register();
 
 
-		$this->assertTrue(class_exists('Rock\\Components\\Flow\\GraphFlow'), 'Loaded Component Flow');
+		$this->assertTrue(class_exists('Rock\\Component\\Flow\\GraphFlow'), 'Loaded Component Flow');
 	}
 }
