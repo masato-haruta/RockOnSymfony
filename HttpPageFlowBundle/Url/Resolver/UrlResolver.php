@@ -21,7 +21,7 @@ use Rock\Component\Flow\Directions;
 
 use Symfony\Component\Routing\RouterInterface;
 //
-use Rock\Component\Http\Flow\Traversal\IPageTraversalState;
+use Rock\Component\Http\Flow\Traversal\IHttpPageTraversalState;
 // <Use>
 use Rock\Component\Http\Flow\IPage;
 /**
@@ -189,7 +189,7 @@ class UrlResolver
 		$this->keys[$name] = $value;
 	}
 
-	public function setTraversal(IHtttpPageTraversalState $traversal)
+	public function setTraversal(IHttpPageTraversalState $traversal)
 	{
 		$this->traversal  = $traversal;
 	}
