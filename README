@@ -6,4 +6,59 @@ This is still on PROTO.
 This and RockComponents are ideal implementation of PAGE-FLOW Controller on Symfony!
 
 
+** RockComponents **
+  At RockOnSymfonyCoreBundle's Extesion is boot, the components is 
+  automatically autoloaded.
+  Thus, you do not need to register on autoloader or active bundles.
+
+** HOW TO USE **
+ 
+1) Add Respositories on your deps
+
+# /deps
+[Rock]
+    git=git://github.com/yoshi49535/RockComponents.git
+    target=/Rock/Component
+[RockOnSymfony]
+    git=git://github.com/yoshi49535/RockOnSymfony.git
+    target=/Rock/OnSymfony
+
+
+2) Edit Your app/config/config.yml as Below
+
+# /app/config/config.yml
+# AT END OF FILE
+rock_on_symfony_core:
+    directory:   %kernel.root_dir%/../vendor/Rock/Component
+
+3) Regist on Autoload
+
+# /app/autoload.php
+$loader->registerNamespaces(array(
+  ...
+  // Add below
+  'Rock\\OnSymfony' => __DIR__.'/../vendor'
+));
+
+3) Regist on Autoload
+
+# /app/autoload.php
+$loader->registerNamespaces(array(
+  ...
+  // Add below
+  'Rock\\OnSymfony' => __DIR__.'/../vendor'
+));
+
+4) Activate the Bundles
+
+# /app/AppKernel.php
+public function registerBundles()
+{
+	$bundles = array(
+	  ....
+	  // Add Below
+      new Rock\OnSymfony\CoreBundle\RockOnSymfonyCoreBundle(),
+      new Rock\OnSymfony\HttpPageFlowBundle\RockOnSymfonyHttpPageFlowBundle(),
+	);
+}
 
