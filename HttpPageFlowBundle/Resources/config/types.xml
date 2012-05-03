@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+	<parameters>
+		<!-- Type Default -->
+		<parameter key="rock.page_flow.template.default.class">Rock\OnSymfony\HttpPageFlowBundle\Type\DefaultType</parameter>
+		<!-- Type Form -->
+		<parameter key="rock.page_flow.template.form.new.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormNewType</parameter>
+		<parameter key="rock.page_flow.template.form.edit.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormEditType</parameter>
+		<!-- Type FormConfirm -->
+		<parameter key="rock.page_flow.template.form.confirm.new.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormConfirmNewType</parameter>
+		<parameter key="rock.page_flow.template.form.confirm.edit.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormConfirmEditType</parameter>
+	</parameters>
+
+    <services>
+        <!-- Type Default -->
+        <service 
+			id="rock.page_flow.template.default" 
+			class="%rock.page_flow.template.default.class%"
+		>
+		    <tag name="rock.page_flow.type"/>
+		</service>
+        <!-- Type Form -->
+        <service 
+			id="rock.page_flow.template.form.new" 
+			class="%rock.page_flow.template.form.new.class%"
+		>
+		    <tag name="rock.page_flow.type"/>
+		</service>
+        <service 
+			id="rock.page_flow.template.form.edit" 
+			class="%rock.page_flow.template.form.edit.class%"
+		>
+		    <tag name="rock.page_flow.type"/>
+		</service>
+        <!-- Type Form -->
+        <service 
+			id="rock.page_flow.template.form.confirm.new" 
+			class="%rock.page_flow.template.form.confirm.new.class%"
+		>
+		    <tag name="rock.page_flow.type"/>
+		</service>
+        <service 
+			id="rock.page_flow.template.form.cofnirm.edit" 
+			class="%rock.page_flow.template.form.confirm.edit.class%"
+		>
+		    <tag name="rock.page_flow.type"/>
+		</service>
+
+	</services>
+</container>

@@ -8,13 +8,11 @@
 		<parameter key="rock.page_flow.component_builder.class">Rock\OnSymfony\HttpPageFlowBundle\Definition\Builder</parameter>
 		<parameter key="rock.page_flow.container.class">Rock\OnSymfony\HttpPageFlowBundle\Definition\Container</parameter>
 
-		<parameter key="rock.page_flow.template.default.class">Rock\OnSymfony\HttpPageFlowBundle\Type\DefaultType</parameter>
-		<parameter key="rock.page_flow.template.form.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormType</parameter>
 		<parameter key="rock.page_flow.state_stack.class">Rock\OnSymfony\HttpPageFlowBundle\Traversal\TraversalStack</parameter>
 		<parameter key="rock.page_flow.event_listener.class">Rock\OnSymfony\HttpPageFlowBundle\EventListener\FlowListener</parameter>
 		<parameter key="rock.page_flow.session_manager.class">Rock\OnSymfony\HttpPageFlowBundle\Session\SessionManager</parameter>
 
-		<parameter key="rock.page_flow.event_dispatcher.class">Rock\OnSymfony\HttpPageFlowBundle\EventDispatcher\EventDispatcher</parameter>
+		<parameter key="rock.page_flow.event_dispatcher.class">Symfony\Component\EventDispatcher\EventDispatcher</parameter>
 		<parameter key="rock.page_flow.twig.extensions.class">Rock\OnSymfony\HttpPageFlowBundle\Twig\Extension\HttpPageFlowTwigExtension</parameter>
 
 		<parameter key="rock.page_flow.url.resolver.class">Rock\OnSymfony\HttpPageFlowBundle\Url\Resolver\UrlResolver</parameter>
@@ -106,26 +104,5 @@
 		>
 			<argument type="service" id="controller_resolver"/>
 		</service>
-
-        <!-- Regist Flow Templates -->
-        <service 
-			id="rock.page_flow.template.default" 
-			class="%rock.page_flow.template.default.class%"
-		>
-		    <tag name="rock.page_flow.type"/>
-		</service>
-        <service 
-			id="rock.page_flow.template.form" 
-			class="%rock.page_flow.template.form.class%"
-		>
-		    <tag name="rock.page_flow.type"/>
-		</service>
-        <service 
-			id="rock.page_flow.template.demo" 
-			class="Rock\OnSymfony\HttpPageFlowBundle\Type\DemoType"
-		>
-		    <tag name="rock.page_flow.type"/>
-		</service>
-
 	</services>
 </container>

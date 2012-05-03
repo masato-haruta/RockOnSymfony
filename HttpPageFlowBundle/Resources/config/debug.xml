@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
 	<parameters>
-		<parameter key="rock.page_flow.event_dispatcher.class">Rock\OnSymfony\HttpPageFlowBundle\EventDispatcher\TraceableEventDispatcher</parameter>
+		<parameter key="rock.page_flow.event_dispatcher.class">Symfony\Bundle\FrameworkBundle\Debug\TraceableEventDispatcher</parameter>
 		<!--
 		<parameter key="rock.page_flow.event_dispatcher.class">Rock\OnSymfony\HttpPageFlowBundle\EventDispatcher\TraceableEventDispatcher</parameter>
 		-->
@@ -21,5 +21,12 @@
             <argument type="service" id="service_container" />
             <argument type="service" id="logger" on-invalid="null" />
         </service>
+		<!-- Demo Type -->
+        <service 
+			id="rock.page_flow.template.demo" 
+			class="Rock\OnSymfony\HttpPageFlowBundle\Type\DemoType"
+		>
+		    <tag name="rock.page_flow.type"/>
+		</service>
     </services>
 </container>
