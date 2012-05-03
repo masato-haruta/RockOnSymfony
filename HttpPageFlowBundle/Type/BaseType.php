@@ -33,11 +33,12 @@ abstract class BaseType extends BaseTypeBase
 		parent::__construct($id);
         $this->class  = '\\Rock\\OnSymfony\\HttpPageFlowBundle\\Flow\PageFlow';
 
-		$this->defaultStateClass = '\\Rock\OnSymfony\\HttpPageFlowBundle\\Definition\\PageDefinition';
+		$this->defaultStateClass = '\\Rock\\OnSymfony\\HttpPageFlowBundle\\Definition\\StateDefinition';
+		$this->defaultPageClass  = '\\Rock\\OnSymfony\\HttpPageFlowBundle\\Definition\\PageDefinition';
 	}
 
 	protected function configure()
 	{
-		// Extends and defines any State and Condition Definition to define Flow Behavior.
+		// Extends and defines any Page and Condition Definition to define Flow Behavior.
 	}
 }

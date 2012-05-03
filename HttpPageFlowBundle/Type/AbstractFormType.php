@@ -21,27 +21,27 @@ use Rock\OnSymfony\HttpPageFlowBundle\Type\BaseType;
 /**
  *
  */
-class FormType extends BaseType 
+abstract class AbstractFormType extends BaseType 
 {
 	/**
 	 *
 	 */
-	public function __construct()
+	public function __construct($id)
 	{
-		parent::__construct('rock.flow.templates.form');
+		parent::__construct($id);
 
 		$this->class = '\\Rock\\OnSymfony\\HttpPageFlowBundle\\Flow\\Template\\FormFlow';
-		$this->setAttribute('alias', 'Form');
 	}
 	/**
 	 *
 	 */
 	protected function configure()
 	{
-		// Set Sub Definitions
+		// Definine Page Flow
 		$this
 			->addPage('input', array($this->getReference(), 'doInput'))
 			->addCondition(array($this->getReference(),'onValidateInput'))
+			->addState('save', array($this->getReference(), 'doSave'))
 			->addPage('complete', array($this->getReference(), 'doComplete'))
 		;
 	}

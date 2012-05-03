@@ -43,6 +43,7 @@ class DemoType extends BaseType
 		// Set Sub Definitions
 		$this
 			->addPage('first', array($this, 'doFirst'))
+			->addState('noPage', array($this, 'doNoPage'))
 			->addPage('second', array($this, 'doSecond'))
 			->addPage('third', array($this, 'doThird'))
 		;
@@ -54,11 +55,14 @@ class DemoType extends BaseType
 	}
 	public function doSecond(IInput $input)
 	{
-		//$input->getFlow()->set('state', 'second');
 	}
 	public function doThird(IInput $input)
 	{
 		//$input->getFlow()->set('state', 'third');
+	}
+
+	public function doNoPage(IInput $input)
+	{
 	}
 }
 
