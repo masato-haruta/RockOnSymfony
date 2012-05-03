@@ -25,7 +25,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\Event;
 // <Use> : Flow Event
-use Rock\OnSymfony\HttpPageFlowBundle\Event\PageEvents;
+use Rock\OnSymfony\HttpPageFlowBundle\Event\PageFlowEvents;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\HandleFlowEvent;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\HandleFlowWithTraversalEvent;
@@ -46,7 +46,6 @@ class PageFlow extends BaseFlow
 {
 	protected $output     = null;
 	protected $dispatcher = null;
-	protected $bUseRedirection = false;
 
 	/**
 	 *
@@ -130,16 +129,11 @@ class PageFlow extends BaseFlow
 	/**
 	 * 
 	 */
-	protected function doInit(ITraversalState $state)
+	protected function doInit(ITraversalState $traversal)
 	{
-		$this->dispatch(PageEvents::ON_INIT, new HandleFlowWithTraversalEvent($this, $state));
+		$this->dispatch(PageFlowEvents::onFlow('init'), new HandleFlowWithTraversalEvent($this, $traversal));
 
-		parent::doInit($state);
-
-		if($this->useRedirection() && ($state->getInput()->getDirection() !== Directions::CURRENT))
-		{
-			$this->addListener(PageEvents::EVENT_PREFIX.'.'.PageEvents::ON_PAGE_PREFIX, array($this, 'onPageRedirect'));
-		}
+		parent::doInit($traversal);
 	}
 	
 	/**
@@ -147,42 +141,83 @@ class PageFlow extends BaseFlow
 	 */
 	protected function doInitPath()
 	{
-		$this->dispatch(PageEvents::ON_INIT_PATH, new HandleFlowEvent($this));
+		$this->dispatch(PageFlowEvents::onFlow('init_path'), new HandleFlowEvent($this));
 		parent::doInitPath();
 	}
 	/**
 	 * 
 	 */
-	protected function doShutdown(ITraversalState $state)
+	protected function doShutdown(ITraversalState $traversal)
 	{
-		parent::doShutdown($state);
-		$this->dispatch(PageEvents::ON_SHUTDOWN, new HandleFlowWithTraversalEvent($this, $state));
+		parent::doShutdown($traversal);
+		$this->dispatch(PageFlowEvents::onFlow('shutdown'), new HandleFlowWithTraversalEvent($this, $traversal));
 	}
 
-	protected function doHandleInput(ITraversalState $state)
-	{
-		$this->dispatch(PageEvents::ON_HANDLE_INPUT, new HandleFlowWithTraversalEvent($this, $state));
-		// Set state output as this output
-		$this->allocateOutput($state->getOutput());
 
-		parent::doHandleInput($state);
-		// Release Output
-		$this->releaseOutput();
+	/**
+	 * 
+	 */
+	protected function doHandleInput(ITraversalState $traversal)
+	{
+		$this->dispatch(PageFlowEvents::onFlow('handle_input'), new HandleFlowWithTraversalEvent($this, $traversal));
+		// Set traversal output as this output
+		$bAllocated = false;
+
+		try
+		{
+			if(!$this->output)
+			{
+				$bAllocated = true;
+				$this->allocateOutput($traversal->getOutput());
+			}
+			parent::doHandleInput($traversal);
+
+			// Release Output
+			if($bAllocated)
+			{
+				$this->releaseOutput();
+				$bAllocated = false;
+			}
+		}
+		catch(\Exception $ex)
+		{
+			// release Output
+			if($bAllocated)
+				$this->releaseOutput();
+			throw $ex;
+		}
 	}
 
-	protected function doRecoverTraversal(ITraversalState $state)
+	/**
+	 * 
+	 */
+	protected function doHandleState(ITraversalState $traversal)
 	{
-		parent::doRecoverTraversal($state);
-
-		$this->dispatch(PageEvents::ON_RECOVER_STATE, new HandleFlowWithTraversalEvent($this, $state));
+		parent::doHandleState($traversal);
+		//
 	}
 
+	/**
+	 * 
+	 */
+	protected function doRecoverTraversal(ITraversalState $traversal)
+	{
+		parent::doRecoverTraversal($traversal);
+
+		$this->dispatch(PageFlowEvents::onFlow('recover_traversal'), new HandleFlowWithTraversalEvent($this, $traversal));
+	}
+
+	/**
+	 * 
+	 */
 	public function getOutput()
 	{
 		if(!$this->output)
 			throw new \RuntimeException('$output is not allocated on this timing.');
+		//
 		return $this->output;
 	}
+
 	/**
 	 *
 	 */
@@ -238,19 +273,4 @@ class PageFlow extends BaseFlow
 		return $page;
 	}
 
-	public function setUseRedirection($bUse = true)
-	{
-		$this->bUseRedirection = $bUse;
-	}
-	public function useRedirection()
-	{
-		return $this->bUseRedirection;
-	}
-
-	public function onPageRedirect(IPageEvent $event)
-	{
-		// Redirection is ON
-		$output  = $event->getFlow()->getOutput();
-		$output->setUseRedirection(true);
-	}
 }

@@ -64,7 +64,7 @@ class UrlResolver
 	 */
 	public function resolveDirectionFromRequest(Request $request)
 	{
-		return $request->get($this->getKey('direction'), Directions::CURRENT);
+		return $request->get($this->getKey('direction'));
 	}
 
 	public function resolveUrlFromState(IPage $page = null)

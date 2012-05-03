@@ -15,13 +15,13 @@
  ****/
 // <Namespace>
 namespace Rock\OnSymfony\HttpPageFlowBundle\Flow;
-// <Base>
-use Rock\Component\Http\Flow\Page as BasePage;
+// @interface
+use Rock\Component\Http\Flow\IPage;
 
 // <Use> : EventDispatcher
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 // <Use> : Events
-use Rock\OnSymfony\HttpPageFlowBundle\Event\PageEvents;
+use Rock\OnSymfony\HttpPageFlowBundle\Event\PageFlowEvents;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\HandlePageEvent;
 // <Use> : Input
 use Rock\Component\Flow\Input\IInput;
@@ -29,7 +29,9 @@ use Rock\Component\Flow\Input\IInput;
 /**
  *
  */
-class Page extends BasePage
+class Page extends LogicState
+  implements
+    IPage
 {
 	/**
 	 * @override Rock\Component\Flow\Graph\State\State
@@ -38,15 +40,22 @@ class Page extends BasePage
 	 */
 	public function handle(IInput $input)
 	{
-		// handle w/ IInput
-		parent::handle($input);
-
-		// handle w/ EventDispatcher
 		$flow  = $this->getGraph()->getFlow();
-		
-		if($flow && ($flow instanceof EventDispatcherInterface))
+
+		if($input->useRedirection() && ($input->getRequestedDirection() !== null))
 		{
-			$flow->dispatch(PageEvents::page($this->getName()), new HandlePageEvent($flow, $this));
+			$output  = $flow->getOutput();
+			$output->setRedirectTo($this);
+		}
+		else
+		{
+			// handle w/ IInput
+			parent::handle($input);
+			//
+			if($flow && ($flow instanceof EventDispatcherInterface))
+			{
+				$flow->dispatch(PageFlowEvents::onPage($this->getName()), new HandlePageEvent($flow, $this));
+			}
 		}
 	}
 }

@@ -19,12 +19,12 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\Event;
 /**
  *
  */
-interface IPageEvent extends IStateEvent
+interface IStateEvent extends IPageFlowEvent
 {
 	/**
 	 *
 	 */
-	function getPage();
+	function getState();
 }
 
 

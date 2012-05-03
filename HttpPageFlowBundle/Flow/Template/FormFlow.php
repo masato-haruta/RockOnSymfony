@@ -13,29 +13,60 @@
  * $Copyrights$
  *
  ****/
-// <Namespace>
+// @namespace
 namespace Rock\OnSymfony\HttpPageFlowBundle\Flow\Template;
-// <Base>
-use Rock\OnSymfony\HttpPageFlowBundle\Flow\PageFlow;
 
 // <Use> : Event
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;
 use Rock\Component\Flow\Input\IInput;
 
-class FormFlow extends PageFlow
+/**
+ *
+ */
+abstract class FormFlow extends AbstractFormFlow
 {
 	/**
 	 *
 	 */
 	public function doInput(IInput $input)
 	{
-		$this->set('state', 'input');
+		$form = $this->getForm();
+
+		// Read Session and if has form_data, bind it.
+		if($this->has('form_data'))
+			$form->setData('form_data')
+	}
+
+	/**
+	 *
+	 */
+	public function doValidateInput(IInput $input)
+	{
+		$bValid   = false;
+		
+		// Validate registed form and save into session
+		$form  = $this->getForm();
+		$form->bindRequest($input->getHttpRequest());
+
+		// Validate form
+		if($bValid = $form->isValid())
+		{
+			$this->set('form_data', $form->getData());
+		}
+		
+		return $bValid;
+	}
+
+	/**
+	 * Update or Create Entity or some
+	 */
+	public function doSave()
+	{
 	}
 	/**
 	 *
 	 */
 	public function doComplete(IInput $event)
 	{
-		$this->set('state', 'complete');
 	}
 }

@@ -50,6 +50,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Rock\OnSymfony\HttpPageFlowBundle\Traversal\HttpPageTraversalStateProxy;
 // <Use> : Flow
 use Rock\Component\Flow\IFlowContainable;
+use Rock\Component\Http\Flow\Input\IHttpInput;
 // <Use> : Response
 use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
@@ -254,6 +255,7 @@ class FlowListener extends FlowExecuteHandler
 		//
 		$flowContainer  = $this->container->get('rock.page_flow.container');
 		$flow  = $flowContainer->getByAlias($this->getFlowConfiguration()->getValue());
+
 		$this->setFlowOnOriginal($flow);
 
 		// Set Flow instance as flow, so action parameter can solve $flow
@@ -269,40 +271,55 @@ class FlowListener extends FlowExecuteHandler
 	
 		$state   = $flow->createTraversalState();
 		
-		$input   = $this->getRequestResolver()->resolveInput($request);
+		$response = array();
 		try
 		{
+			$input   = $this->getRequestResolver()->resolveInput($request);
+			if($input instanceof IHttpInput)
+			{
+				$input->setRedirectionSetting($this->getFlowConfiguration()->useCleanUrl());
+			}
+
 			$output  = $flow->handle(
 				$input,
 				$state
 			);
+			// 
+			if(!$output->isSuccess())
+			{
+				throw new \Exception('Flow is somehow failed.');
+			}
+			else if($output->needRedirect())
+			{
+				$url  = $this->getUrlResolver()->resolveUrlFromState($output->getRedirectTo());
+				
+				$response  = new RedirectResponse($url);
+			}
+			else
+			{
+				$this->getUrlResolver()->setTraversal($output->getTraversal());
+				// apply template value
+				$this->applyTemplateName($request, $output->getTraversal()->getCurrent()->getName());
+
+				// state proxy
+				$state   = new HttpPageTraversalStateProxy(
+					$output->getTraversal(),
+					$this->getUrlResolver()
+				);
+
+				// Into scope, this scope will be poped when the Kernel::RESPONSE is handled
+				$this->getTraversalStack()->push($state);
+
+				$response = $output->all();
+			}
 		}
 		catch(\Exception $ex)
 		{
 			throw $ex;
 		}
 
-		if($output->useRedirection())
-		{
-			$url  = $this->getUrlResolver()->resolveUrlFromState($output->getTrail()->last()->current());
 
-			return new RedirectResponse($url);
-		}
-
-		$this->getUrlResolver()->setTraversal($output->getTraversal());
-		// apply template value
-		$this->applyTemplateName($request, $output->getTraversal()->getCurrent()->getName());
-
-		// state proxy
-		$state   = new HttpPageTraversalStateProxy(
-			$output->getTraversal(),
-			$this->getUrlResolver()
-		);
-
-		// Into scope, this scope will be poped when the Kernel::RESPONSE is handled
-		$this->getTraversalStack()->push($state);
-
-		return $output->all();
+		return $response;
 	}
 
 	/**
@@ -390,8 +407,6 @@ class FlowListener extends FlowExecuteHandler
 		}
 		//
 		$flow->setName($this->getFlowConfiguration()->getName());
-		//
-		$flow->setUseRedirection($this->getFlowConfiguration()->useCleanUrl());
 
 		// 
 		$flow->setSessionManager($this->container->get('rock.page_flow.session_manager'));

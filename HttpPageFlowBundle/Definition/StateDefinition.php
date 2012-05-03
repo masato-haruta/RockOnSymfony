@@ -16,16 +16,16 @@
 // @namesapce
 namespace Rock\OnSymfony\HttpPageFlowBundle\Definition;
 // @extends
-use Rock\Component\Http\Flow\Definition\PageDefinition as BaseDefinition;
+use Rock\Component\Flow\Definition\StateDefinition as BaseDefinition;
 /**
  *
  */
-class PageDefinition extends BaseDefinition
+class StateDefinition extends BaseDefinition
 {
 	public function __construct($id)
 	{
 		parent::__construct($id);
 
-		$this->class = '\\Rock\\OnSymfony\\HttpPageFlowBundle\\Flow\\Page';
+		$this->class = '\\Rock\\OnSymfony\\HttpPageFlowBundle\\Flow\\LogicState';
 	}
 }

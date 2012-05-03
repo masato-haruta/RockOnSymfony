@@ -73,22 +73,29 @@ class ControllerFilterController
 		// Execute all controller functions
 		$response  = array();
 
-		foreach($this->controllers as $controller)
+		try
 		{
-			$arguments = $this->resolver->getArguments($request, $controller);
-
-			$res  = call_user_func_array($controller, $arguments);
-
-			if(is_array($res))
+			foreach($this->controllers as $controller)
 			{
-				$response = array_merge($response, $res);
+				$arguments = $this->resolver->getArguments($request, $controller);
+
+				$res  = call_user_func_array($controller, $arguments);
+
+				if(is_array($res))
+				{
+					$response = array_merge($response, $res);
+				}
+				else
+				{
+					// if Response Object is given, then stop
+					$response  = $res;
+					break;
+				}
 			}
-			else
-			{
-				// if Response Object is given, then stop
-				$response  = $res;
-				break;
-			}
+		}
+		catch(\Exception $ex)
+		{
+			throw $ex;
 		}
 
 		return $response;

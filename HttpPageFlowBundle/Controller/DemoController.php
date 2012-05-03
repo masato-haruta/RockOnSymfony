@@ -14,8 +14,17 @@ use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IConstructEvent as IFlowConstructEvent;
 use Rock\Component\Flow\Input\IInput as IFlowInput;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 class DemoController extends Controller
 {
+	/**
+	 * @Route("clear", name="rock_clear_sess")
+	 */
+	public function clearAction()
+	{
+		$this->get('session')->remove('rock.page_flow');
+		return new RedirectResponse('default_index');
+	}
     /**
      * @Route("/index", name="rock_demo_default")
      * @Route("/index/{state}", name="rock_demo_default_state")

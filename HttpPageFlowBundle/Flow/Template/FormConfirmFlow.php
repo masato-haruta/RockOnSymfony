@@ -13,18 +13,8 @@
  * $Copyrights$
  *
  ****/
-// @namespace
-namespace Rock\OnSymfony\HttpPageFlowBundle\Event;
 
-/**
- *
- */
-interface IPageEvent extends IStateEvent
+class FormConfirmFlow extends FormFlow
 {
-	/**
-	 *
-	 */
-	function getPage();
+	
 }
-
-
