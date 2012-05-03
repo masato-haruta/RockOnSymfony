@@ -24,6 +24,7 @@ use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 // @use Definition Interface
 use Rock\Component\Configuration\Definition\Definition;
+use Rock\Component\Configuration\Definition\Filter\InterfaceAwareInjectionFilter;
 
 	
 
@@ -94,6 +95,17 @@ class Builder extends ComponentBuilder
 	public function setEventDispatcher(EventDispatcherInterface $dispatcher)
 	{
 		$this->dispatcher  = $dispatcher;
+		
+		// if Container has EventDipstacher Filter, clear
+		if($this->container)
+			$this->getContainer()->removeFilter('event_dispatcher_aware');
+		// 
+		$this->getContainer()->addFilter(new InterfaceAwareInjectionFilter(
+			'interface.event_dispatcher_aware',
+			'\\Rock\\OnSymfony\\HttpPageFlowBundle\\Aware\\IEventDispatcherAware',
+			'setEventDispatcher',
+			$this->dispatcher
+		));
 	}
 
 	/**
@@ -106,15 +118,15 @@ class Builder extends ComponentBuilder
 		return $this->dispatcher;
 	}
 
-	/**
-	 *
-	 */
-	protected function createInstanceFromDefinition(Definition $definition)
-	{
-		$component = parent::createInstanceFromDefinition($definition);
+	///**
+	// *
+	// */
+	//protected function createInstanceFromDefinition(Definition $definition)
+	//{
+	//	$component = parent::createInstanceFromDefinition($definition);
 
-		if($component instanceof EventDispatcherInterface)
-			$component->setEventDispatcher($this->getEventDispatcher());
-		return $component;
-	}
+	//	if($component instanceof EventDispatcherInterface)
+	//		$component->setEventDispatcher($this->getEventDispatcher());
+	//	return $component;
+	//}
 }

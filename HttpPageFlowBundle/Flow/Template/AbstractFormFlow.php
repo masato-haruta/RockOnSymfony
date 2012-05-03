@@ -15,28 +15,55 @@
  ****/
 // <Namespace>
 namespace Rock\OnSymfony\HttpPageFlowBundle\Flow\Template;
-// <Base>
+// @extends
 use Rock\OnSymfony\HttpPageFlowBundle\Flow\PageFlow;
+// @use Form Factory
+use Symfony\Component\Form\FormFactoryInterface;
+// @use Form Type
+use Symfony\Component\Form\FormTypeInterface;
+// @use Aware Interface to Inject FormFactory on Container
+use Rock\OnSymfony\HttpPageFlowBundle\Aware\IFormFactoryAware;
+// @use Flow Traversal
+use Rock\Component\Flow\Traversal\ITraversalState;
 
 /**
  *
  */
 abstract class AbstractFormFlow extends PageFlow
+  implements
+    IFormFactoryAware
 {
+	// @var FormFactoryInterface
+	protected $formFactory;
+	protected $form;
+	protected $formType;
+	protected $formOptions;
+	protected $formData;
+
+	public function __construct()
+	{
+		parent::__construct();
+
+		$this->form     = null;
+		$this->formType = null;
+		$this->formData = null;
+		$this->formOptions = array();
+	}
 	
 	/**
 	 * Set form.factory from ServiceContainer
 	 */
-	public function setFormFactory($factory)
+	public function setFormFactory(FormFactoryInterface $factory)
 	{
 		$this->formFactory = $factory;
 	}
+	
 	/**
 	 *
 	 */
 	public function getFormFactory()
 	{
-		return $this->formFactory();
+		return $this->formFactory;
 	}
 
 	/**
@@ -46,6 +73,7 @@ abstract class AbstractFormFlow extends PageFlow
 	{
 		$this->formData  = $data;
 	}
+
 	/**
 	 *
 	 */
@@ -53,18 +81,33 @@ abstract class AbstractFormFlow extends PageFlow
 	{
 		return $this->formData;
 	}
+
 	/**
 	 *
 	 */
 	public function setFormType($type)
 	{
-		$this->formType  = $type;
+		if($type instanceof FormTypeInterface)
+		{
+			$this->formType = $type;
+		}
+		else if(is_string($type))
+		{
+			$this->formType = class_exists($type) ? new $type() : $type;
+		}
+		else
+		{
+			throw new \Exception('Invalid Form Type is given.');
+		}
 	}
+
 	/**
 	 *
 	 */
 	public function getFormType()
 	{
+		if(!$this->formType)
+			throw new \Exception('FormType is not specified.');
 		return $this->formType;
 	}
 
@@ -73,7 +116,7 @@ abstract class AbstractFormFlow extends PageFlow
 	 */
 	public function createFormBuilder($data = null, array $options = array())
 	{
-		return $this->getFormFactory()->createBuidler(
+		return $this->getFormFactory()->createBuilder(
 				'form',
 				$data,
 				$options
@@ -87,7 +130,15 @@ abstract class AbstractFormFlow extends PageFlow
 	{
 		return $type ? 
 		  $this->createFormBuilder($data, $options)->getForm() :
-		  $this->createFormFactory()->createForm($type, $data, $options);
+		  $this->getFormFactory()->create($type, $data, $options);
+	}
+
+	/**
+	 *
+	 */
+	public function getFormOptions(array $options = array())
+	{
+		return array_merge($this->formOptions, $options);
 	}
 
 	/**
@@ -100,6 +151,7 @@ abstract class AbstractFormFlow extends PageFlow
 		  ($this->formBuilder = $this->createFormBuilder($this->getFormData(), $this->getFormOptions()))
 		;
 	}
+
 	/**
 	 *
 	 */
@@ -109,5 +161,24 @@ abstract class AbstractFormFlow extends PageFlow
 		  $this->form :
 		  ($this->form = $this->createForm($this->getFormType(), $this->getFormData(), $this->getFormOptions()))
 		;
+	}
+
+
+	/**
+	 *
+	 */
+	protected function doInit(ITraversalState $traversal)
+	{
+		parent::doInit($traversal);
+
+		// Get Form Parameters from Input
+		$input  = $traversal->getInput();
+		if($input)
+		{
+			if($input->has('form_type'))
+			{
+				$this->setFormType($input->get('form_type'));
+			}
+		}
 	}
 }

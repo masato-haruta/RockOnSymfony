@@ -18,7 +18,7 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\Flow;
 // <Base> 
 use Rock\Component\Http\Flow\PageFlow as BaseFlow;
 // <Interface>
-use Rock\OnSymfony\HttpPageFlowBundle\EventDispatcher\IEventDispatcherAware;
+use Rock\OnSymfony\HttpPageFlowBundle\Aware\IEventDispatcherAware;
 // <Use> : EventDispatcher
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -42,6 +42,7 @@ use Rock\OnSymfony\HttpPageFlowBundle\Flow\Page;
  */
 class PageFlow extends BaseFlow
   implements
+	IEventDispatcherAware,
 	EventDispatcherInterface
 {
 	protected $output     = null;
@@ -242,6 +243,10 @@ class PageFlow extends BaseFlow
 			$this->output->set($name, $value);
 	}
 
+	public function has($name)
+	{
+		return $this->output->has($name);
+	}
 	/**
 	 *
 	 */
@@ -260,6 +265,13 @@ class PageFlow extends BaseFlow
 			return $this->output->all();
 
 		return array();
+	}
+
+	public function getSession()
+	{
+		if($this->output)
+			return $this->output->getTraversal()->getSession();
+		return null;
 	}
 
 	/**

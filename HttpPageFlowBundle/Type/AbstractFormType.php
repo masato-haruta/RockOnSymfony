@@ -40,7 +40,7 @@ abstract class AbstractFormType extends BaseType
 		// Definine Page Flow
 		$this
 			->addPage('input', array($this->getReference(), 'doInput'))
-			->addCondition(array($this->getReference(),'onValidateInput'))
+			->addCondition(array($this->getReference(),'doValidateInput'))
 			->addState('save', array($this->getReference(), 'doSave'))
 			->addPage('complete', array($this->getReference(), 'doComplete'))
 		;

@@ -31,10 +31,6 @@ class Flow
 	/**
 	 * @var
 	 */
-	protected $owner;
-	/**
-	 * @var
-	 */
 	protected $value;
 	/**
 	 * @var
@@ -56,24 +52,16 @@ class Flow
 	 * @var
 	 */
 	protected $token;
-	/**
-	 * @var
-	 */
-	protected $listeners;
-
-	/**
-	 * @var
-	 */
-	protected $builderListeners;
-	/**
-	 * @var
-	 */
-	protected $flowListeners;
 
 	/**
 	 * @var
 	 */
 	protected $bUseClean;
+
+	/**
+	 * @var
+	 */
+	protected $method;
 
 
 	/**
@@ -82,18 +70,13 @@ class Flow
 	public function __construct(array $values)
 	{
 		$this->bUseClean   = true;
-		$this->owner       = null;
-		$this->listeners   = array();
 		$this->type        = 'DEFAULT';
+		$this->method      = 'get';
 
 		//
 		foreach($values as $k => $v)
 		{
-			if(preg_match('/^on/i', $k))
-			{
-				$this->addListener($k, $v);
-			}
-			else if(method_exists($this, $method = 'set'.ucfirst($k)))
+			if(method_exists($this, $method = 'set'.ucfirst($k)))
 			{
 				$this->$method($v);
 			}
@@ -130,23 +113,6 @@ class Flow
 		$this->type  = $type;
 	}
 
-	/**
-	 *
-	 */
-	public function setListenerOwner($owner)
-	{
-		$this->owner  = $owner;
-	}
-	/**
-	 *
-	 */
-	public function getListenerOwner()
-	{
-		if(!$this->owner)
-			throw new \Exception("Listener Owneris not initialzed yet.");
-		return $this->owner;
-	}
-
 	// Direction
 	public function setDirectionOnRoute($key)
 	{
@@ -164,58 +130,6 @@ class Flow
 	public function getStateOnRoute()
 	{
 		return $this->stateKey;
-	}
-	// Listener
-	/**
-	 *
-	 */
-	public function addListener($eventname, $value)
-	{
-		$this->listeners[$eventname]  = $value;
-	}
-
-	/**
-	 *
-	 */
-	protected function cleanListeners()
-	{
-		$this->flowListeners  = array();
-		$this->builderListeners  = array();
-		foreach($this->listeners as $eventname => $listener)
-		{
-			$eventname = EventNameResolver::resolve($eventname);
-			
-			if(false === strpos($eventname, 'builder'))
-			{
-				$this->flowListeners[$eventname]  = array($this->getListenerOwner(), $listener);
-			}
-			else
-			{
-				$this->builderListeners[$eventname] = array($this->getListenerOwner(), $listener);
-			}
-		}
-	}
-	/**
-	 *
-	 */
-	public function getBuilderListeners()
-	{
-		if(!$this->builderListeners)
-		{
-			$this->cleanListeners();
-		}
-		return $this->builderListeners;
-	}
-	/**
-	 *
-	 */
-	public function getFlowListeners()
-	{
-		if(!$this->flowListeners)
-		{
-			$this->cleanListeners();
-		}
-		return $this->flowListeners;
 	}
 
 	// Route
@@ -242,24 +156,62 @@ class Flow
 	    return 'flow';
 	}
 
-
+	/**
+	 *
+	 */
 	public function setTemplateToken($token)
 	{
 		$this->token  = $token;
 	}
+
+	/**
+	 *
+	 */
 	public function getTemplateToken()
 	{
 		return $this->token;
 	}
 
+	/**
+	 *
+	 */
 	public function setCleanUrl($bClean)
 	{
 		if(!is_bool($bClean))
 			throw new \InvalidArgumentException('useClean has to be a boolean.');
 		$this->bUseClean  = $bClean;
 	}
+
+	/**
+	 *
+	 */
 	public function useCleanUrl()
 	{
 		return $this->bUseClean;
+	}
+
+	/**
+	 *
+	 */
+	public function getMethod()
+	{
+		return $this->method;
+	}
+
+	/**
+	 *
+	 */
+	public function setMethod($method)
+	{
+		$method  = strtolower($method);
+		switch($method)
+		{
+		case 'get':
+		case 'post':
+			$this->method  = $method;
+			break;
+		default:
+			break;
+		}
 	}
 }

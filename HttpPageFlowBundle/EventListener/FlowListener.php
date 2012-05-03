@@ -43,6 +43,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as RouteConfiguration;
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Route as FlowRouteConfiguration;
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Flow as FlowConfiguration;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowHandler as FlowHandlerConfiguration;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowVars as FlowVarsConfiguration;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template as TemplateConfiguration;
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Template as FlowTemplateConfiguration;
 
@@ -76,11 +78,27 @@ class FlowListener extends FlowExecuteHandler
 	 *
 	 */
 	protected $templateConfiguration = null;
+	
+	/**
+	 *
+	 */
+	protected $handlers = array();
+
+	/**
+	 *
+	 */
+	protected $dispatcher = array();
 
 	/**
 	 * Original Controller
 	 */
 	protected $controller;
+	
+	/**
+	 *
+	 */
+	protected $inputVars = array();
+
 	/**
 	 *
 	 */
@@ -103,6 +121,15 @@ class FlowListener extends FlowExecuteHandler
 		}
 	}
 
+	public function onKernelRequest(GetResponseEvent $event)
+	{
+		$this->controller = null;
+		$this->inputVars  = array();
+		$this->handlers   = array();
+		$this->flowConfiguration = null;
+		$this->routeConfiguration = null;
+		$this->templateConfiguration = null;
+	}
 
 	public function onKernelResponse(FilterResponseEvent $event)
 	{
@@ -171,10 +198,19 @@ class FlowListener extends FlowExecuteHandler
 		{
 			if($configuration instanceof FlowConfiguration)
 			{
-				// For Listeners, set Controller as Listener Owner
-				$configuration->setListenerOwner($controller[0]);
 				// set Flow Configuration 
 				$this->setFlowConfiguration($configuration);
+			}
+			else if($configuration instanceof FlowHandlerConfiguration)
+			{
+				$configuration->setOwner($controller[0]);
+				$configuration->setEventnameResolver($resolver);
+
+				$this->handlers[]  = $configuration;
+			}
+			else if($configuration instanceof FlowVarsConfiguration)
+			{
+				$this->inputVars   = array_merge($this->inputVars, $configuration->getValues());
 			}
 			else if($configuration instanceof RouteConfiguration)
 			{
@@ -274,11 +310,12 @@ class FlowListener extends FlowExecuteHandler
 		$response = array();
 		try
 		{
-			$input   = $this->getRequestResolver()->resolveInput($request);
+			$input   = $this->getRequestResolver()->resolveInput($request, $this->inputVars);
 			if($input instanceof IHttpInput)
 			{
 				$input->setRedirectionSetting($this->getFlowConfiguration()->useCleanUrl());
 			}
+			
 
 			$output  = $flow->handle(
 				$input,
@@ -329,6 +366,7 @@ class FlowListener extends FlowExecuteHandler
 	{
 		if($request->attributes->has('_template'))
 		{
+			// Post Handle Template Value
 			$template = $request->attributes->get('_template');
 			// Replace TemplateToken
 			$token    = $this->getFlowConfiguration()->getTemplateToken();
@@ -341,6 +379,7 @@ class FlowListener extends FlowExecuteHandler
 		}
 		else if(($config = $this->getTemplateConfiguration()) instanceof FlowTemplateConfiguration)
 		{
+			// Pre Handle Template Value
 			$config   = $this->getTemplateConfiguration();
 			$config->setStateToken($token);
 			$config->setStateValue($name);
@@ -354,6 +393,23 @@ class FlowListener extends FlowExecuteHandler
 	/**
 	 *
 	 */
+	protected function getEventDispatcher()
+	{
+		// Initialize EventDispatcher
+		if(!$this->dispatcher)
+		{
+			$this->dispatcher  = $this->container->get('rock.page_flow.event_dispatcher');
+
+			foreach($this->handlers as $handler)
+			{
+				$this->dispatcher->addListener($handler->getEventname(), $handler->getCallable());
+			}
+		}
+		return $this->dispatcher;
+	}
+	/**
+	 *
+	 */
 	protected function initContainer()
 	{
 		$config   = $this->getFlowConfiguration();
@@ -361,15 +417,10 @@ class FlowListener extends FlowExecuteHandler
 		//
 		{
 			// Update Builder with Listener
-			$builder    = $this->container->get('rock.page_flow.component_builder');
+			$flowContainer = $this->container->get('rock.page_flow.container');
+			$builder    = $flowContainer->getComponentBuilder();
 			// Initialize EventDispatcher for this flow
-			$builder->setEventDispatcher($this->container->get('rock.page_flow.event_dispatcher'));
-
-			// Regist Builder Listeners
-			foreach($config->getBuilderListeners() as $eventname => $listener)
-			{
-				$builder->addListener($eventname, $listener);
-			}
+			$builder->setEventDispatcher($this->getEventDispatcher());
 		}
 	}
 
@@ -390,6 +441,9 @@ class FlowListener extends FlowExecuteHandler
 
 		// Setup RequestResolver
 		$this->getRequestResolver()->setUrlResolver($resolver);
+
+		// Method
+		$this->getRequestResolver()->setRequestMethod($config->getMethod());
 	}
 
 	/**
@@ -397,14 +451,6 @@ class FlowListener extends FlowExecuteHandler
 	 */
 	protected function initFlowSetting(IFlow $flow)
 	{
-		// 
-		if($flow instanceof EventDispatcherInterface)
-		{
-			foreach($this->getFlowConfiguration()->getFlowListeners() as $eventname => $listener)
-			{
-				$flow->addListener($eventname, $listener);
-			}
-		}
 		//
 		$flow->setName($this->getFlowConfiguration()->getName());
 

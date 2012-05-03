@@ -19,8 +19,8 @@ namespace Rock\OnSymfony\HttpPageFlowBundle\Request\Resolver;
 use Rock\OnSymfony\HttpPageFlowBundle\Request\Resolver\IRequestResolver;
 // <Use> : Symfony Http Request
 use Symfony\Component\HttpFoundation\Request;
-// <Use> : Flow HttpInput
-use Rock\Component\Http\Flow\Input\Input as FlowInput;
+// @use Flow Input
+use Rock\OnSymfony\HttpPageFlowBundle\Input\Input;
 // <Use> : UrlResolver
 use Rock\OnSymfony\HttpPageFlowBundle\Url\Resolver\IUrlResolver;
 
@@ -31,27 +31,36 @@ class RequestResolver
   implements 
     IRequestResolver
 {
+	/**
+	 *
+	 */
+	protected $method;
+	/**
+	 *
+	 */
 	protected $urlResolver;
 	/**
 	 *
 	 */
 	public function __construct(IUrlResolver $urlResolver = null)
 	{
+		$this->method       = 'get';
 		$this->urlResolver  = $urlResolver;
 	}
 
 	/**
 	 *
 	 */
-	public function resolveInput(Request $request)
+	public function resolveInput(Request $request, $parameters = array())
 	{
 		$direction = $this->getUrlResolver()->resolveDirectionFromRequest($request);
 		$stateName = $this->getUrlResolver()->resolveStateFromRequest($request);
 		
 		// 
-		$input  = new FlowInput(
+		$input  = new Input(
+			$request,
 			$direction,
-			$request->query->all()
+			array_merge($parameters, $request->query->all())
 		);
 
 		// Set StateFilter
@@ -84,5 +93,26 @@ class RequestResolver
 	public function setUrlResolver(IUrlResolver $resolver)
 	{
 		$this->urlResolver = $resolver;
+	}
+	
+	/**
+	 *
+	 */
+	public function setRequestMethod($method)
+	{
+		switch($method)
+		{
+		case 'get':
+		case 'post':
+			$this->method  = $method;
+			break;
+		default:
+			throw new \InvalidArgumentException(sprintf('Method has to be "get" or "post", but "%s" is given.', $method));
+			break;
+		}
+	}
+	public function getRequestMethod()
+	{
+		return $this->method;
 	}
 }

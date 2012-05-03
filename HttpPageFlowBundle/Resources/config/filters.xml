@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+	<parameters>
+		<parameter key="rock.page_flow.container.filter.interface_aware_injection.class">Rock\Component\Configuration\Definition\Filter\InterfaceAwareInjectionFilter</parameter>
+	</parameters>
+
+    <services>
+		<!-- Inject into InterfaceAware -->
+		<service
+			id="rock.page_flow.container.filter.interface.form_factory_injection"
+			class="%rock.page_flow.container.filter.interface_aware_injection.class%"
+		>
+			<argument>interface.form_factory_aware</argument>
+			<argument>Rock\OnSymfony\HttpPageFlowBundle\Aware\IFormFactoryAware</argument>
+			<argument>setFormFactory</argument>
+			<argument type="service" id="form.factory"/>
+			<tag
+				name="rock.page_flow.container.filter"
+			/>
+		</service>
+		<!--
+		EventDispatcher is scope prototype, thus add by builder
+		<service
+			id="rock.page_flow.container.filter.interface.event_dispatcher_aware"
+			class="%rock.page_flow.container.filter.interface_aware_injection.class%"
+		>
+			<argument>Rock\OnSymfony\HttpPageFlowBundle\Aware\IEventDispatcherAware</argument>
+			<argument>setEventDispatcher</argument>
+			<argument type="service" id="rock.page_flow.event_dispatcher"/>
+			<tag
+				name="rock.page_flow.container.filter"
+			/>
+		</service>
+		-->
+	</services>
+</container>

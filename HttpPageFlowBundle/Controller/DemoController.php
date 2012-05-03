@@ -7,6 +7,8 @@ use Rock\OnSymfony\HttpPageFlowBundle\Controller\FlowController as Controller;
 
 // <Use> : Annotation
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Flow;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowHandler;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowVars;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 // <Use> : Rock Flow 
@@ -29,7 +31,9 @@ class DemoController extends Controller
      * @Route("/index", name="rock_demo_default")
      * @Route("/index/{state}", name="rock_demo_default_state")
      * @Template()
-	 * @Flow("Default", route="rock_demo_default_state", directionOnRoute="direction", stateOnRoute="state", onFlowInit="onTestInit", onPageFirst="onFirstOnTest", cleanUrl=true)
+	 * @Flow("Default", route="rock_demo_default_state", directionOnRoute="direction", stateOnRoute="state", cleanUrl=true)
+	 * @FlowHandler("onFlowInit", method="onTestInit")
+	 * @FlowHandler("onPageFirst", method="onFirstOnTest")
      */
     public function indexAction()
     {
@@ -49,8 +53,9 @@ class DemoController extends Controller
     /**
      * @Route("/form", name="rock_demo_default_form")
      * @Route("/form/{state}", name="rock_demo_default_form_state")
-     * @Template()
-	 * @Flow("Form", route="rock_demo_default_form_state")
+     * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:form/{state}.html.twig")
+	 * @Flow("FormConfirmNew", route="rock_demo_default_form_state", method="post")
+	 * @FlowVars({"form_type" = "Type"})
      */
 	public function formAction()
 	{

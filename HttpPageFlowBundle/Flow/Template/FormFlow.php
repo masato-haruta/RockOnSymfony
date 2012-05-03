@@ -23,7 +23,7 @@ use Rock\Component\Flow\Input\IInput;
 /**
  *
  */
-abstract class FormFlow extends AbstractFormFlow
+class FormFlow extends AbstractFormFlow
 {
 	/**
 	 *
@@ -33,8 +33,10 @@ abstract class FormFlow extends AbstractFormFlow
 		$form = $this->getForm();
 
 		// Read Session and if has form_data, bind it.
-		if($this->has('form_data'))
-			$form->setData('form_data')
+		if($this->getSession()->has('form_data'))
+			$this->setFormData($this->getSession()->get('form_data'));
+
+		$this->set('form', $form->createView());
 	}
 
 	/**
@@ -43,7 +45,7 @@ abstract class FormFlow extends AbstractFormFlow
 	public function doValidateInput(IInput $input)
 	{
 		$bValid   = false;
-		
+
 		// Validate registed form and save into session
 		$form  = $this->getForm();
 		$form->bindRequest($input->getHttpRequest());

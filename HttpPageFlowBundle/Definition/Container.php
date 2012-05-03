@@ -16,7 +16,7 @@
 // @naemspace
 namespace Rock\OnSymfony\HttpPageFlowBundle\Definition;
 // @extends
-use Rock\Component\Configuration\Definition\Container as BaseContainer;
+use Rock\Component\Configuration\Definition\InjectionContainer as BaseContainer;
 // @use Component Builder Interface
 use Rock\Component\Configuration\Definition\IComponentBuilder;
 

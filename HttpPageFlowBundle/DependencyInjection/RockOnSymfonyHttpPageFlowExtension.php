@@ -25,6 +25,7 @@ class RockOnSymfonyHttpPageFlowExtension extends Extension
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
         $loader->load('types.xml');
+        $loader->load('filters.xml');
 
 		if($container->getParameter('kernel.debug'))
 		{
