@@ -30,11 +30,23 @@ class FormFlow extends AbstractFormFlow
 	 */
 	public function doInput(IInput $input)
 	{
-		$form = $this->getForm();
-
+		$data = array();
 		// Read Session and if has form_data, bind it.
 		if($this->getSession()->has('form_data'))
-			$this->setFormData($this->getSession()->get('form_data'));
+		{
+			$data = $this->getSession()->get('form_data');
+			// 
+			$this->setFormData($data);
+		}
+		//
+		$form = $this->getForm();
+
+		// For error case, bind the data and regenerate CSRF token.
+		if($this->getSession()->has('form_success') && !$this->getSession()->get('form_success'))
+		{
+			// 
+			$form->bind($data);
+		}
 
 		$this->set('form', $form->createView());
 	}
@@ -48,13 +60,14 @@ class FormFlow extends AbstractFormFlow
 
 		// Validate registed form and save into session
 		$form  = $this->getForm();
-		$form->bindRequest($input->getHttpRequest());
 
-		// Validate form
-		if($bValid = $form->isValid())
-		{
-			$this->set('form_data', $form->getData());
-		}
+		$form->bindRequest($input->getHttpRequest());
+		$this->getSession()->set('form_data', $form->getData());
+		
+		$bValid = $form->isValid();
+		$this->getSession()->set('form_success', $bValid);
+		// Force save into session
+		$this->getSessionManager()->save();
 		
 		return $bValid;
 	}

@@ -33,7 +33,12 @@ abstract class AbstractFormFlow extends PageFlow
   implements
     IFormFactoryAware
 {
+	// 
+	const TYPE_CLASS  = 'class';
+	const TYPE_STRING = 'string';
+
 	// @var FormFactoryInterface
+	protected $formTypeType;
 	protected $formFactory;
 	protected $form;
 	protected $formType;
@@ -47,7 +52,8 @@ abstract class AbstractFormFlow extends PageFlow
 		$this->form     = null;
 		$this->formType = null;
 		$this->formData = null;
-		$this->formOptions = array();
+		$this->formOptions  = array();
+		$this->formTypeType = false;
 	}
 	
 	/**
@@ -93,7 +99,19 @@ abstract class AbstractFormFlow extends PageFlow
 		}
 		else if(is_string($type))
 		{
-			$this->formType = class_exists($type) ? new $type() : $type;
+			switch($this->getFormTypeType())
+			{
+			case self::TYPE_CLASS:
+				$this->formType = new $type();
+				break;
+			case self::TYPE_STRING:
+				$this->formType = $type;
+				break;
+			default:
+				$this->formType = class_exists($type) ? new $type() : $type;
+				break;
+			}
+
 		}
 		else
 		{
@@ -108,7 +126,17 @@ abstract class AbstractFormFlow extends PageFlow
 	{
 		if(!$this->formType)
 			throw new \Exception('FormType is not specified.');
+
 		return $this->formType;
+	}
+
+	public function setFormTypeType($type)
+	{
+		$this->formTypeType = $type;
+	}
+	public function getFormTypeType()
+	{
+		return $this->formTypeType;
 	}
 
 	/**
@@ -129,8 +157,8 @@ abstract class AbstractFormFlow extends PageFlow
 	public function createForm($type = null, $data = null, array $options = array())
 	{
 		return $type ? 
-		  $this->createFormBuilder($data, $options)->getForm() :
-		  $this->getFormFactory()->create($type, $data, $options);
+		  $this->getFormFactory()->create($type, $data, $options) :
+		  $this->createFormBuilder($data, $options)->getForm() ;
 	}
 
 	/**
@@ -138,7 +166,7 @@ abstract class AbstractFormFlow extends PageFlow
 	 */
 	public function getFormOptions(array $options = array())
 	{
-		return array_merge($this->formOptions, $options);
+		return array_merge($this->formOptions, $options, array('csrf_protection' => false));
 	}
 
 	/**
@@ -175,6 +203,8 @@ abstract class AbstractFormFlow extends PageFlow
 		$input  = $traversal->getInput();
 		if($input)
 		{
+			if($input->has('form_type_type'))
+				$this->setFormTypeType($input->get('form_type_type'));
 			if($input->has('form_type'))
 			{
 				$this->setFormType($input->get('form_type'));

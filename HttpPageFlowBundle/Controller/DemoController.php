@@ -67,7 +67,7 @@ class DemoController extends Controller
      * @Route("/form/{state}", name="rock_demo_default_form_state")
      * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:form/{state}.html.twig")
 	 * @Flow("FormConfirmNew", route="rock_demo_default_form_state", method="post")
-	 * @FlowVars({"form_type" = "Type"})
+	 * @FlowVars({"form_type_type"="class", "form_type"="Rock\OnSymfony\HttpPageFlowBundle\Tests\Form\TestFormType"})
      */
 	public function formAction()
 	{
