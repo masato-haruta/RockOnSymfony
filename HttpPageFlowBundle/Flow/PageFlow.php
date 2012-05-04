@@ -273,16 +273,4 @@ class PageFlow extends BaseFlow
 			return $this->output->getTraversal()->getSession();
 		return null;
 	}
-
-	/**
-	 *
-	 */
-	protected function createPage($name, $listener)
-	{
-		$page   = new Page($this->getPath(), $name, $listener);
-		$this->getPath()->addVertex($page);
-		
-		return $page;
-	}
-
 }
