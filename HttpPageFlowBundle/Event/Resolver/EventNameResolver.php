@@ -22,30 +22,33 @@ use Rock\OnSymfony\HttpPageFlowBundle\Event\PageFlowEvents;
  *
  */
 class EventNameResolver
+  implements
+    IEventNameResolver
 {
-	static public function resolve($name)
+	public function resolve($name)
 	{
 		// Page Event
 		if(preg_match('/^onPage(?P<name>.*)$/', $name, $match))
 		{
-			return PageFlowEvents::onPage(self::snakeize($match['name']));
+			return PageFlowEvents::onPage($this->snakeize($match['name']));
 		}
 		// Flow Event
 		else if(preg_match('/^onFlow(?P<name>.*)$/', $name, $match))
 		{
-			return PageFlowEvents::on(self::snakeize($match['name']));
+			return PageFlowEvents::onFlow($this->snakeize($match['name']));
 		}
 		// Builder Event
 		else if(preg_match('/on(?P<name>.*)$/', $name, $match))
 		{
-			return PageFlowEvents::onBuilder(self::snakeize($match['name']));
+			return PageFlowEvents::onBuilder($this->snakeize($match['name']));
 		}
 		return $name;
 	}
+
 	/**
 	 *
 	 */
-	static public function snakeize($value)
+	public function snakeize($value)
 	{
 		$value = preg_replace('/([A-Z])/', '_$1', $value);
 		$value = strtolower($value);

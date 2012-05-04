@@ -204,7 +204,7 @@ class FlowListener extends FlowExecuteHandler
 			else if($configuration instanceof FlowHandlerConfiguration)
 			{
 				$configuration->setOwner($controller[0]);
-				$configuration->setEventnameResolver($resolver);
+				$configuration->setEventnameResolver($this->container->get('rock.page_flow.eventname.resolver'));
 
 				$this->handlers[]  = $configuration;
 			}
@@ -221,6 +221,9 @@ class FlowListener extends FlowExecuteHandler
 				$this->setTemplateConfiguration($configuration);
 			}
 		}
+
+		// Initialize FlowBuilder Settings
+		$this->initContainer();
 	}
 
 	/**
@@ -238,8 +241,6 @@ class FlowListener extends FlowExecuteHandler
 	{
 
 		$this->flowConfiguration  = $configuration;
-		// Initialize FlowBuilder Settings
-		$this->initContainer();
 
 		// Initialize Resolver Settings
 		$this->initResolverSetting();
@@ -402,7 +403,10 @@ class FlowListener extends FlowExecuteHandler
 
 			foreach($this->handlers as $handler)
 			{
-				$this->dispatcher->addListener($handler->getEventname(), $handler->getCallable());
+				$this->dispatcher->addListener(
+					$handler->getEventname(), 
+					$handler->getCallable()
+				);
 			}
 		}
 		return $this->dispatcher;

@@ -17,22 +17,47 @@
 namespace Rock\OnSymfony\HttpPageFlowBundle\Annotation;
 // @interface
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
-
+// @use Event
+use Rock\OnSymfony\HttpPageFlowBundle\Event\Resolver\IEventNameResolver;
 /**
- * 
+ *
  * e.x.
  *    @FlowHandler("onInit", method="onInitIndex")
  *
+ */
+/**
  * @Annotation
  */
 class FlowHandler
   implements
     ConfigurationInterface
 {
+
+	/**
+	 * @var 
+	 */
 	protected $_eventname;
+
+	/**
+	 * @var 
+	 */
 	protected $owner;
+
+	/**
+	 * @var 
+	 */
 	protected $eventname;
+
+	/**
+	 * @var 
+	 */
 	protected $method;
+
+	/**
+	 * @var 
+	 */
+	protected $resolver;
+
 	/**
 	 *
 	 */
@@ -76,7 +101,9 @@ class FlowHandler
 	 */
 	protected function cleanEventname()
 	{
-		$this->eventname = EventNameResolver::resolve($this->_eventname);
+		if(!$this->resolver)
+			throw new \Exception('EventName Resolver is not initialized.');
+		$this->eventname = $this->resolver->resolve($this->_eventname);
 	}
 
 	/**
@@ -119,6 +146,14 @@ class FlowHandler
 	public function getCallable()
 	{
 		return array($this->owner, $this->getMethod());
+	}
+
+	/**
+	 * @var 
+	 */
+	public function setEventNameResolver(IEventNameResolver $resolver)
+	{
+		$this->resolver  = $resolver;
 	}
 
 	/**

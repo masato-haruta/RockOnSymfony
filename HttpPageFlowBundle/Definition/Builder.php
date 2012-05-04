@@ -99,7 +99,8 @@ class Builder extends ComponentBuilder
 		// if Container has EventDipstacher Filter, clear
 		if($this->container)
 			$this->getContainer()->removeFilter('event_dispatcher_aware');
-		// 
+
+		// Insert EventDispatcher into Aware
 		$this->getContainer()->addFilter(new InterfaceAwareInjectionFilter(
 			'interface.event_dispatcher_aware',
 			'\\Rock\\OnSymfony\\HttpPageFlowBundle\\Aware\\IEventDispatcherAware',

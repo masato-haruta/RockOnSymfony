@@ -11,12 +11,22 @@ use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowHandler;
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowVars;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-// <Use> : Rock Flow 
+
+// @use Flow Handler Events 
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;
+use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageFlowEvent;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IConstructEvent as IFlowConstructEvent;
+// @use Flow Input 
 use Rock\Component\Flow\Input\IInput as IFlowInput;
+// @use Page for Lazy Insertion Sample
+use Rock\OnSymfony\HttpPageFlowBundle\Flow\Page;
+use Rock\Component\Automaton\Condition\Condition;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
+/**
+ *
+ */
 class DemoController extends Controller
 {
 	/**
@@ -27,18 +37,20 @@ class DemoController extends Controller
 		$this->get('session')->remove('rock.page_flow');
 		return new RedirectResponse('default_index');
 	}
+
     /**
      * @Route("/index", name="rock_demo_default")
      * @Route("/index/{state}", name="rock_demo_default_state")
      * @Template()
 	 * @Flow("Default", route="rock_demo_default_state", directionOnRoute="direction", stateOnRoute="state", cleanUrl=true)
-	 * @FlowHandler("onFlowInit", method="onTestInit")
-	 * @FlowHandler("onPageFirst", method="onFirstOnTest")
+	 * @FlowHandler("onFlowInit", method="onInitIndexFlow")
+	 * @FlowHandler("onPageFirst", method="onIndexFirst")
      */
     public function indexAction()
     {
         return array('name' => 'default');
     }
+	
     /**
      * @Route("/test", name="rock_demo_test")
      * @Route("/test/{state}", name="rock_demo_test_state")
@@ -63,19 +75,16 @@ class DemoController extends Controller
 	}
 
 	/**
-	 *
+	 * Sample Code of Lazy Insertion of Flow-Page
 	 */
-	public function onTestInit(IPageFlowEvent $event)
+	public function onInitIndexFlow(IPageFlowEvent $event)
 	{
-		throw new \Exception();
 		// Add Stp into Flow
-		$flow = $event->getForm();
-		$flow
-		    ->addPage('first')
-			->addCondition(array($this, 'doValidateFirst'))
-		    ->addPage('second', array($this, 'doSecondOnTest'))
-		    ->addPage('third', array($this, 'doThirdOnTest'))
-		;
+		$flow = $event->getFlow();
+		$path = $flow->getPath();
+		$path->addVertex($first = new Page($path, 'first'));
+		$path->addVertex($second = new Page($path, 'second', array($this, 'doSecond')));
+		$path->addEdge(new Condition($first, $second, array($this, 'doValidateFirst')));
 	}
 
 	/**
@@ -83,30 +92,22 @@ class DemoController extends Controller
 	 */
 	public function doValidateFirst(IFlowInput $input)
 	{
-			throw new \Exception('baa');
-		return 'string';
+		return true;
 	}
 
 	/**
-	 *
+	 * Handler insterted by Annotation
 	 */
-	public function onFirstOnTest(IPageEvent $event)
+	public function onIndexFirst(IPageEvent $event)
 	{
 	    $event->getFlow()->set('name', 'first');
 	}
 
 	/**
-	 *
+	 * Handler registed by Page
 	 */
-	public function doSecondOnTest(IFlowInput $input)
+	public function doSecond(IFlowInput $input)
 	{
 		$this->getFlow()->set('name', 'second');
-	}
-	/**
-	 *
-	 */
-	public function doThirdOnTest(IFlowInput $input)
-	{
-		$this->getFlow()->set('name', 'end');
 	}
 }
