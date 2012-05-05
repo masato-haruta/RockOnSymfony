@@ -39,6 +39,10 @@ class EventNameResolver
 		{
 			return PageFlowEvents::onFlow($this->snakeize($match['name']));
 		}
+		else if(preg_match('/^onState(?P<name>.*)$/', $name, $match))
+		{
+			return PageFlowEvents::onState($this->snakeize($match['name']));
+		}
 		// Builder Event
 		else if(preg_match('/on(?P<name>.*)$/', $name, $match))
 		{
