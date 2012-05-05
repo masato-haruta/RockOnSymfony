@@ -13,7 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 // @use Flow Handler Events 
-use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;
+use Rock\OnSymfony\HttpPageFlowBundle\Event\IStateEvent;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageFlowEvent;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IConstructEvent as IFlowConstructEvent;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\PageFlowOutputFilterEvent;
@@ -57,11 +57,16 @@ class DemoController extends Controller
 	 * @Flow("FormConfirmNew", route="rock_demo_default_form_state", method="post")
 	 * @FlowVars({"form_type_type"="class", "form_type"="Rock\OnSymfony\HttpPageFlowBundle\Tests\Form\TestFormType"})
 	 * @FlowHandler("onPageConfirmFilterOutput")
+	 * @FlowHandler("onStateInit", method="onStateInitForForm")
      */
 	public function formAction()
 	{
 		// Do Any action for all page in flow 
 		return array();
+	}
+	public function onStateInitForForm(IStateEvent $event)
+	{
+		//throw new \Exception('init');
 	}
 
 	public function onPageConfirmFilterOutput(PageFlowOutputFilterEvent $event)
@@ -111,7 +116,7 @@ class DemoController extends Controller
 	/**
 	 * Handler insterted by Annotation
 	 */
-	public function onIndexFirst(IPageEvent $event)
+	public function onIndexFirst(IStateEvent $event)
 	{
 	    $event->getFlow()->set('name', 'first');
 	}
