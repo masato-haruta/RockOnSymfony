@@ -132,6 +132,24 @@ class PageFlow extends BaseFlow
 	/**
 	 * 
 	 */
+	protected function doInitTraversal(ITraversalState $traversal)
+	{
+		parent::doInitTraversal($traversal);
+		// 
+		$this->dispatch(PageFlowEvents::onFlow('init_traversal'), new HandleFlowWithTraversalEvent($this, $traversal));
+	}
+	/**
+	 * 
+	 */
+	protected function doRecoverTraversal(ITraversalState $traversal)
+	{
+		parent::doRecoverTraversal($traversal);
+		// 
+		$this->dispatch(PageFlowEvents::onFlow('recover_traversal'), new HandleFlowWithTraversalEvent($this, $traversal));
+	}
+	/**
+	 * 
+	 */
 	protected function doInit(ITraversalState $traversal)
 	{
 		parent::doInit($traversal);
@@ -210,6 +228,10 @@ class PageFlow extends BaseFlow
 		$this->dispatch(PageFlowEvents::onFlow('recover_traversal'), new HandleFlowWithTraversalEvent($this, $traversal));
 	}
 
+	public function isAllocateOutput()
+	{
+		return !is_null($this->output);
+	}
 	/**
 	 * 
 	 */
@@ -269,10 +291,13 @@ class PageFlow extends BaseFlow
 		return array();
 	}
 
+	/**
+	 *
+	 */
 	public function getSession()
 	{
-		if($this->output)
-			return $this->output->getTraversal()->getSession();
-		return null;
+		if(!$this->output)
+			throw new \RuntimeException('Session is required, but the TraversalState is not init yet.');
+		return $this->output->getTraversal()->getSession();
 	}
 }
