@@ -16,6 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageFlowEvent;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IConstructEvent as IFlowConstructEvent;
+use Rock\OnSymfony\HttpPageFlowBundle\Event\PageFlowOutputFilterEvent;
 // @use Flow Input 
 use Rock\Component\Flow\Input\IInput as IFlowInput;
 // @use Page for Lazy Insertion Sample
@@ -68,10 +69,21 @@ class DemoController extends Controller
      * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:form/{state}.html.twig")
 	 * @Flow("FormConfirmNew", route="rock_demo_default_form_state", method="post")
 	 * @FlowVars({"form_type_type"="class", "form_type"="Rock\OnSymfony\HttpPageFlowBundle\Tests\Form\TestFormType"})
+	 * @FlowHandler("onPageConfirmFilterOutput")
      */
 	public function formAction()
 	{
 		return array();
+	}
+
+	public function onPageConfirmFilterOutput(PageFlowOutputFilterEvent $event)
+	{
+		$output = $event->getOutput();
+		
+		$formData   = $output->get('form');
+		
+		$formData['sample'] = 'Filtered Value : '.$formData['sample'];
+		$output->set('form', $formData);
 	}
 
 	/**

@@ -25,6 +25,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 // <Use> : Events
 use Rock\OnSymfony\HttpPageFlowBundle\Event\PageFlowEvents;
 use Rock\OnSymfony\HttpPageFlowBundle\Event\HandlePageEvent;
+use Rock\OnSymfony\HttpPageFlowBundle\Event\PageFlowOutputFilterEvent;
 // <Use> : Input
 use Rock\Component\Flow\Input\IInput;
 
@@ -58,6 +59,13 @@ class Page extends LogicState
 			{
 				$flow->dispatch(PageFlowEvents::onPage($this->getName()), new HandlePageEvent($flow, $this));
 			}
+		}
+
+	
+		// Output Filter Event
+		if($flow && ($flow instanceof EventDispatcherInterface))
+		{
+			$flow->dispatch(PageFlowEvents::onPage($this->getName().'_filter_output'), new PageFlowOutputFilterEvent($flow, $this, $flow->getOutput()));
 		}
 	}
 }

@@ -84,6 +84,11 @@ class FlowHandler
 	public function setValue($value)
 	{
 		$this->_eventname  = $value;
+
+		if($this->method === null)
+		{
+			$this->setMethod($value);
+		}
 	}
 
 	/**
