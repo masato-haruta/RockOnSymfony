@@ -218,15 +218,6 @@ class PageFlow extends BaseFlow
 		//
 	}
 
-	/**
-	 * 
-	 */
-	protected function doRecoverTraversal(ITraversalState $traversal)
-	{
-		parent::doRecoverTraversal($traversal);
-
-		$this->dispatch(PageFlowEvents::onFlow('recover_traversal'), new HandleFlowWithTraversalEvent($this, $traversal));
-	}
 
 	public function isAllocateOutput()
 	{
