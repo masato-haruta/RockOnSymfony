@@ -30,6 +30,13 @@ class FormFlow extends AbstractFormFlow
 	/**
 	 *
 	 */
+	public function doInitializeForm(IInput $input)
+	{
+		// Do your initialization on Controller or here
+	}
+	/**
+	 *
+	 */
 	public function doInput(IInput $input)
 	{
 		$data = array();

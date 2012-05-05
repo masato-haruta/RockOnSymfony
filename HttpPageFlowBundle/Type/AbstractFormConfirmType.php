@@ -33,6 +33,7 @@ abstract class AbstractFormConfirmType extends AbstractFormType
 	{
 		// Definine Page Flow
 		$this
+		    ->addState('init', array($this->getReference(), 'doInitializeForm'))
 			->addPage('input', array($this->getReference(), 'doInput'))
 			->addCondition(array($this->getReference(), 'doValidateInput'))
 			->addPage('confirm', array($this->getReference(), 'doConfirm'))
