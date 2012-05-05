@@ -87,7 +87,6 @@ class DoctrineDelegator extends AbstractStateDelegator
 		$em      = $this->getEntityManager();
 		$invoker = $this->getInvoker();
 
-throw new \Exception(get_class($em));
 		// 
 		$data    = $form->getData();
 		$em->remove($data);

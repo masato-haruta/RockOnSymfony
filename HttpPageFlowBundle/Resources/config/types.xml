@@ -13,6 +13,8 @@
 		<!-- Type FormConfirm -->
 		<parameter key="rock.page_flow.template.form.confirm.new.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormConfirmNewType</parameter>
 		<parameter key="rock.page_flow.template.form.confirm.edit.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormConfirmEditType</parameter>
+		<!-- Delete -->
+		<parameter key="rock.page_flow.template.delete.class">Rock\OnSymfony\HttpPageFlowBundle\Type\DeleteType</parameter>
 	</parameters>
 
     <services>
@@ -49,6 +51,11 @@
 		>
 		    <tag name="rock.page_flow.definition"/>
 		</service>
-
+        <service 
+			id="rock.page_flow.template.delete"
+			class="%rock.page_flow.template.delete.class%"
+		>
+		    <tag name="rock.page_flow.definition"/>
+		</service>
 	</services>
 </container>

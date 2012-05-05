@@ -52,6 +52,22 @@ class DemoController extends Controller
     }
 
     /**
+     * @Route("/delete", name="rock_demo_default_delete")
+     * @Route("/delete/{state}", name="rock_demo_default_delete_state")
+     * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:delete/{state}.html.twig")
+	 * @Flow("Delete", route="rock_demo_default_delete_state", method="post")
+	 * @FlowHandler("onStateInit", method="onStateInitForDelete")
+	 * @FlowDelegate("delete", delegator="TestDelegator", method="doDelete")
+     */
+	public function deleteAction()
+	{
+		// Do Any action for all page in flow 
+		return array();
+	}
+	public function onStateInitForDelete(IStateEvent $event)
+	{
+	}
+    /**
      * @Route("/form", name="rock_demo_default_form")
      * @Route("/form/{state}", name="rock_demo_default_form_state")
      * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:form/{state}.html.twig")

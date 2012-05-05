@@ -14,7 +14,6 @@
  * please read the LICENSE file that is distributed with the source code.
  *
  ****/
-
 // @namespace
 namespace Rock\OnSymfony\HttpPageFlowBundle\Flow\Template;
 
