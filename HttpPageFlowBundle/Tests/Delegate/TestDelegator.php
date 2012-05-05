@@ -27,25 +27,44 @@ use Rock\OnSymfony\HttpPageFlowBundle\Aware\ILoggerAware;
 /**
  *
  */
-class TestFormSaveDelegator extends AbstractStateDelegator
+class TestDelegator extends AbstractStateDelegator
   implements
     ILoggerAware
 {
 	protected $logger;
+	/**
+	 *
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+	}
 
 	public function setLogger(LoggerInterface $logger)
 	{
 		$this->logger  = $logger;
 	}
-
 	/**
 	 *
 	 */
-	protected function doDelegate(IInput $input)
+	protected function doDelete(IInput $input)
+	{
+		// 
+		// 
+		if($this->logger)
+			$this->logger->info('Deleted');
+		
+	}
+	/**
+	 *
+	 */
+	protected function doSave(IInput $input)
 	{
 		// 
 		if($this->logger)
 			$this->logger->info(sprintf('Saved with %s', $this->getParameterBag()));
 	}
 }
+
+
 
