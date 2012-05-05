@@ -80,6 +80,8 @@ abstract class AbstractFormFlow extends PageFlow
 	public function setFormData($data)
 	{
 		$this->formData  = $data;
+
+		$this->getSession()->set('form_data', $data);
 	}
 
 	/**
@@ -87,6 +89,13 @@ abstract class AbstractFormFlow extends PageFlow
 	 */
 	public function getFormData()
 	{
+		if(!$this->formData)
+		{
+			if($this->getSession()->has('form_data'))
+			{
+				$this->formData = $this->getSession()->get('form_data');
+			}
+		}
 		return $this->formData;
 	}
 

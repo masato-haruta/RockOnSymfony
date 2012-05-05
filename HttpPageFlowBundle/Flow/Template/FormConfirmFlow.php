@@ -26,15 +26,21 @@ use Rock\Component\Flow\Input\IInput;
  */
 class FormConfirmFlow extends FormFlow
 {
+	/**
+	 *
+	 */
 	public function doConfirm(IInput $input)
 	{
 		$form = $this->getForm();
 		
 		// do some
-
-		$this->set('form', $form->createView());
+		$this->set('form', $form->getData() );
+		$this->set('_form', $form);
 	}
 
+	/**
+	 *
+	 */
 	public function doValidateSession(IInput $input)
 	{
 		return true;

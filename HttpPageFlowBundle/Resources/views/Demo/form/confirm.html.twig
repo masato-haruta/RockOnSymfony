@@ -1,9 +1,9 @@
 {% extends "::base.html.twig" %}
 
 {% block body %}
-<form action="{{ page_next }}" method="post" {{ form_enctype(form) }}>
-	confirm any value here
-    <input type="submit" value="confirm"/>
+<form action="{{ page_next }}" method="post">
+	confirmed Value is "{{ form.sample }}"
+	<input type="submit" value="confirm"/>
 </form>
 <a href="{{ page_prev}}">back</a>
 {% endblock %}

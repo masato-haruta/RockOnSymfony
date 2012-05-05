@@ -33,13 +33,6 @@ class FormFlow extends AbstractFormFlow
 	public function doInput(IInput $input)
 	{
 		$data = array();
-		// Read Session and if has form_data, bind it.
-		if($this->getSession()->has('form_data'))
-		{
-			$data = $this->getSession()->get('form_data');
-			// 
-			$this->setFormData($data);
-		}
 		//
 		$form = $this->getForm();
 
@@ -47,10 +40,12 @@ class FormFlow extends AbstractFormFlow
 		if($this->getSession()->has('form_success') && !$this->getSession()->get('form_success'))
 		{
 			// 
+			$data = $this->getFormData();
 			$form->bind($data);
 		}
 
 		$this->set('form', $form->createView());
+		$this->set('_form', $form);
 	}
 
 	/**
@@ -64,7 +59,8 @@ class FormFlow extends AbstractFormFlow
 		$form  = $this->getForm();
 
 		$form->bindRequest($input->getHttpRequest());
-		$this->getSession()->set('form_data', $form->getData());
+		//
+		$this->setFormData($form->getData());
 		
 		$bValid = $form->isValid();
 		$this->getSession()->set('form_success', $bValid);
@@ -85,5 +81,9 @@ class FormFlow extends AbstractFormFlow
 	 */
 	public function doComplete(IInput $event)
 	{
+		$form  = $this->getForm();
+
+		$this->set('form', $form->getData());
+		$this->set('_form', $form);
 	}
 }
