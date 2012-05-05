@@ -1,22 +1,19 @@
 <?php
-/************************************************************************************
+/****
  *
  * Description:
  *      
- * $Id$
- * $Date$
- * $Rev$
- * $Author$
  * 
- *  This file is part of the $project$ package.
+ * $Date$
+ * Rev    : see git
+ * Author : Yoshi Aoki <yoshi@44services.jp>
+ * 
+ *  This file is part of the Rock package.
  *
- *  Copyright (c) 2009, 44services.jp. Inc. All rights reserved.
- *  For the full copyright and license information, please read LICENSE file
- *  that was distributed w/ source code.
+ * For the full copyright and license information, 
+ * please read the LICENSE file that is distributed with the source code.
  *
- *  Contact Us : Yoshi Aoki <yoshi@44services.jp>
- *
- ************************************************************************************/
+ ****/
 
 // <Namespace>
 namespace Rock\OnSymfony\HttpPageFlowBundle\EventListener;
@@ -356,7 +353,6 @@ class FlowListener extends FlowExecuteHandler
 			throw $ex;
 		}
 
-
 		return $response;
 	}
 
@@ -462,7 +458,6 @@ class FlowListener extends FlowExecuteHandler
 		$flow->setSessionManager($this->container->get('rock.page_flow.session_manager'));
 	}
 
-
 	/**
 	 *
 	 */
@@ -478,7 +473,6 @@ class FlowListener extends FlowExecuteHandler
 	{
 		return $this->container->get('rock.page_flow.state_stack');
 	}
-
 
 	public function setOriginalController($controller)
 	{

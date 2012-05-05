@@ -26,7 +26,6 @@ class RockOnSymfonyCoreExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-
 		$dir = $config['directory'];
 		$container->setParameter('rock.core.dir', $dir);
 

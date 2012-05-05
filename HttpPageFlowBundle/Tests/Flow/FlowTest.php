@@ -1,18 +1,20 @@
 <?php
-/************************************************************************************
+/****
  *
  * Description:
  *      
- * $Id$
- * $Date$
- * $Rev$
- * $Author$
  * 
- *  This file is part of the $Project$ package.
+ * $Date$
+ * Rev    : see git
+ * Author : Yoshi Aoki <yoshi@44services.jp>
+ * 
+ *  This file is part of the Rock package.
  *
- * $Copyrights$
+ * For the full copyright and license information, 
+ * please read the LICENSE file that is distributed with the source code.
  *
- ************************************************************************************/
+ ****/
+
 namespace Rock\OnSymfony\HttpPageFlowBundle\Tests\Flow;
 
 // <Use> : PHPUnit Test
@@ -60,14 +62,11 @@ class FlowTest extends WebTestCase
 
 		$this->assertTrue($output->getTrail()->last()->current()->getName() === 'first', 'Assert State First');
 
-
 		$output  = $flow->handle(new Input(Directions::NEXT), $output->getTraversal());
 		$this->assertTrue($output instanceof IOutput, 'Assert Output Instance');
 
-
 		$this->assertTrue($output->getTraversal()->getTrail()->count() === 3, sprintf('Assert Traversal Trail count is 3, but %d', $output->getTraversal()->getTrail()->count()));
 		$this->assertTrue($output->getTrail()->last()->current()->getName() === 'second', 'Assert State Second');
-
 
 	}
 	protected function getFlowContainer($container)
@@ -76,7 +75,6 @@ class FlowTest extends WebTestCase
 		$builder->setEventDispatcher($container->get('rock.page_flow.event_dispatcher'));
 		$flowContainer = $container->get('rock.page_flow.container');
 		$this->assertTrue($flowContainer instanceof FlowContainer, 'Assert FlowContainer');
-
 
 		return $flowContainer;
 	}

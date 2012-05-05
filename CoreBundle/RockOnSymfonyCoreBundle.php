@@ -31,7 +31,6 @@ class RockOnSymfonyCoreBundle extends Bundle
 
 		$loader->register();
 
-
 		if(!class_exists('\\Rock\\Component\\Core\\Rock'))
 			throw new \Exception('Failed to regist');
 	}
