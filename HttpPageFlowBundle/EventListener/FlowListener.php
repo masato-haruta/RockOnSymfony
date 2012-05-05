@@ -38,11 +38,12 @@ use Rock\OnSymfony\HttpPageFlowBundle\Controller\ControllerFilterController;
 // <Use> : Annotation Configuration
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route as RouteConfiguration;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template as TemplateConfiguration;
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Route as FlowRouteConfiguration;
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Flow as FlowConfiguration;
-use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowHandler as FlowHandlerConfiguration;
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowVars as FlowVarsConfiguration;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template as TemplateConfiguration;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowHandler as FlowHandlerConfiguration;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowDelegate as FlowDelegateConfiguration;
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Template as FlowTemplateConfiguration;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -75,6 +76,11 @@ class FlowListener extends FlowExecuteHandler
 	 *
 	 */
 	protected $templateConfiguration = null;
+	
+	/**
+	 *
+	 */
+	protected $delegates = array();
 	
 	/**
 	 *
@@ -123,6 +129,7 @@ class FlowListener extends FlowExecuteHandler
 		$this->controller = null;
 		$this->inputVars  = array();
 		$this->handlers   = array();
+		$this->delegates  = array();
 		$this->flowConfiguration = null;
 		$this->routeConfiguration = null;
 		$this->templateConfiguration = null;
@@ -204,6 +211,10 @@ class FlowListener extends FlowExecuteHandler
 				$configuration->setEventnameResolver($this->container->get('rock.page_flow.eventname.resolver'));
 
 				$this->handlers[]  = $configuration;
+			}
+			else if($configuration instanceof FlowDelegateConfiguration)
+			{
+				$this->delegates[]  = $configuration;
 			}
 			else if($configuration instanceof FlowVarsConfiguration)
 			{
@@ -290,10 +301,22 @@ class FlowListener extends FlowExecuteHandler
 		$flowContainer  = $this->container->get('rock.page_flow.container');
 		$flow  = $flowContainer->getByAlias($this->getFlowConfiguration()->getValue());
 
+		// Override Flow Actions by Delegate 
+		foreach($this->delegates as $config)
+		{
+			$delegator = $flowContainer->getByAlias($config->getDelegator());
+			$delegator->setDelegateMethod($config->getMethod());
+			$delegator->setParameters($config->getVars());
+			$flow->setStateDelegator(
+				$config->getState(), 
+				$delegator
+			);
+		}
+
 		$this->setFlowOnOriginal($flow);
 
 		// Set Flow instance as flow, so action parameter can solve $flow
-		$request->attributes->set('flow', $flow);
+		//$request->attributes->set('_flow', $flow);
 		// Initialize Flow
 		$this->initFlowSetting($flow, $this->getFlowConfiguration());
 

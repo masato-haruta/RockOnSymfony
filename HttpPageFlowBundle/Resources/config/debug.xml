@@ -9,6 +9,16 @@
 		<!--
 		<parameter key="rock.page_flow.event_dispatcher.class">Rock\OnSymfony\HttpPageFlowBundle\EventDispatcher\TraceableEventDispatcher</parameter>
 		-->
+		<!-- Default Delegators for Doctrine-->
+		<parameter key="rock.definition.state_delegate.class">Rock\Component\Flow\Definition\DelegatorDefinition</parameter>
+		<parameter key="delegator.form_save.test.attributes" type="collection">
+			<parameter key="alias">TestFormSaveDelegator</parameter>
+			<parameter key="class">Rock\OnSymfony\HttpPageFlowBundle\Tests\Delegate\TestFormSaveDelegator</parameter>
+		</parameter>
+		<parameter key="delegator.delete.test.attributes" type="collection">
+			<parameter key="alias">TestDeleteDelegator</parameter>
+			<parameter key="class">Rock\OnSymfony\HttpPageFlowBundle\Tests\Delegate\TestDeleteDelegator</parameter>
+		</parameter>
 	</parameters>
 
     <services>
@@ -27,6 +37,23 @@
 			class="Rock\OnSymfony\HttpPageFlowBundle\Type\DemoType"
 		>
 		    <tag name="rock.page_flow.type"/>
+		</service>
+
+        <service 
+			id="rock.page_flow.definition.delegator.form_save.test" 
+			class="%rock.definition.state_delegate.class%"
+		>
+		    <argument>delegator.form_save.test</argument>
+		    <argument>%delegator.form_save.test.attributes%</argument>
+		    <tag name="rock.page_flow.definition"/>
+		</service>
+        <service 
+			id="rock.page_flow.definition.delegator.delete.test" 
+			class="%rock.definition.state_delegate.class%"
+		>
+		    <argument>delegator.delete.test</argument>
+		    <argument>%delegator.delete.test.attributes%</argument>
+		    <tag name="rock.page_flow.definition"/>
 		</service>
     </services>
 </container>

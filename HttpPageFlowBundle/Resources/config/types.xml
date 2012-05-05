@@ -21,33 +21,33 @@
 			id="rock.page_flow.template.default" 
 			class="%rock.page_flow.template.default.class%"
 		>
-		    <tag name="rock.page_flow.type"/>
+		    <tag name="rock.page_flow.definition"/>
 		</service>
         <!-- Type Form -->
         <service 
 			id="rock.page_flow.template.form.new" 
 			class="%rock.page_flow.template.form.new.class%"
 		>
-		    <tag name="rock.page_flow.type"/>
+		    <tag name="rock.page_flow.definition"/>
 		</service>
         <service 
 			id="rock.page_flow.template.form.edit" 
 			class="%rock.page_flow.template.form.edit.class%"
 		>
-		    <tag name="rock.page_flow.type"/>
+		    <tag name="rock.page_flow.definition"/>
 		</service>
         <!-- Type Form -->
         <service 
 			id="rock.page_flow.template.form.confirm.new" 
 			class="%rock.page_flow.template.form.confirm.new.class%"
 		>
-		    <tag name="rock.page_flow.type"/>
+		    <tag name="rock.page_flow.definition"/>
 		</service>
         <service 
 			id="rock.page_flow.template.form.cofnirm.edit" 
 			class="%rock.page_flow.template.form.confirm.edit.class%"
 		>
-		    <tag name="rock.page_flow.type"/>
+		    <tag name="rock.page_flow.definition"/>
 		</service>
 
 	</services>

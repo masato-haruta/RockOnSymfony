@@ -7,6 +7,7 @@ use Rock\OnSymfony\HttpPageFlowBundle\Controller\FlowController as Controller;
 
 // <Use> : Annotation
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\Flow;
+use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowDelegate;
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowHandler;
 use Rock\OnSymfony\HttpPageFlowBundle\Annotation\FlowVars;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -58,6 +59,7 @@ class DemoController extends Controller
 	 * @FlowVars({"form_type_type"="class", "form_type"="Rock\OnSymfony\HttpPageFlowBundle\Tests\Form\TestFormType"})
 	 * @FlowHandler("onPageConfirmFilterOutput")
 	 * @FlowHandler("onStateInit", method="onStateInitForForm")
+	 * @FlowDelegate("save", delegator="DoctrineDelegator", method="doSave", vars={"EntityManager"="default"})
      */
 	public function formAction()
 	{

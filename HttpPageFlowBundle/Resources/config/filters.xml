@@ -10,6 +10,19 @@
 
     <services>
 		<!-- Inject into InterfaceAware -->
+		<!-- Inject Logger -->
+		<service
+			id="rock.page_flow.container.filter.interface.container"
+			class="%rock.page_flow.container.filter.interface_aware_injection.class%"
+		>
+			<argument>interface.container_aware</argument>
+			<argument>Rock\OnSymfony\HttpPageFlowBundle\Aware\IContainerAware</argument>
+			<argument>setContainer</argument>
+            <argument type="service" id="service_container"/>
+			<tag
+				name="rock.page_flow.container.filter"
+			/>
+		</service>
 		<service
 			id="rock.page_flow.container.filter.interface.form_factory_injection"
 			class="%rock.page_flow.container.filter.interface_aware_injection.class%"
@@ -18,6 +31,32 @@
 			<argument>Rock\OnSymfony\HttpPageFlowBundle\Aware\IFormFactoryAware</argument>
 			<argument>setFormFactory</argument>
 			<argument type="service" id="form.factory"/>
+			<tag
+				name="rock.page_flow.container.filter"
+			/>
+		</service>
+		<!-- Inject EntityManagerCollection -->
+		<service
+			id="rock.page_flow.container.filter.interface.entity_manager_collection_injection"
+			class="%rock.page_flow.container.filter.interface_aware_injection.class%"
+		>
+			<argument>interface.entity_manager_collection_aware</argument>
+			<argument>Rock\OnSymfony\HttpPageFlowBundle\Aware\IEntityManagerCollectionAware</argument>
+			<argument>setEntityManagerCollection</argument>
+			<argument>%doctrine.entity_managers%</argument>
+			<tag
+				name="rock.page_flow.container.filter"
+			/>
+		</service>
+		<!-- Inject Logger -->
+		<service
+			id="rock.page_flow.container.filter.interface.logger"
+			class="%rock.page_flow.container.filter.interface_aware_injection.class%"
+		>
+			<argument>interface.logger_aware</argument>
+			<argument>Rock\OnSymfony\HttpPageFlowBundle\Aware\ILoggerAware</argument>
+			<argument>setLogger</argument>
+            <argument type="service" id="logger" on-invalid="null" />
 			<tag
 				name="rock.page_flow.container.filter"
 			/>

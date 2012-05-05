@@ -6,7 +6,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 // <Use> : DI Container Builder
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 // <Use> : FlowType Compiler
-use Rock\OnSymfony\HttpPageFlowBundle\DependencyInjection\Compiler\FlowTypeCompilerPass;
+use Rock\OnSymfony\HttpPageFlowBundle\DependencyInjection\Compiler\DefinitionCompilerPass;
 use Rock\OnSymfony\HttpPageFlowBundle\DependencyInjection\Compiler\ContainerFilterCompilerPass;
 
 /**
@@ -18,7 +18,7 @@ class RockOnSymfonyHttpPageFlowBundle extends Bundle
 	{
 		parent::build($container);
 
-		$container->addCompilerPass(new FlowTypeCompilerPass());
+		$container->addCompilerPass(new DefinitionCompilerPass());
 		$container->addCompilerPass(new ContainerFilterCompilerPass());
 	}
 }

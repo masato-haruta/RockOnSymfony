@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+	<parameters>
+		<!-- Default Delegators for Doctrine-->
+		<parameter key="rock.definition.state_delegate.class">Rock\Component\Flow\Definition\DelegatorDefinition</parameter>
+		<parameter key="rock.page_flow.delegator.doctrine.attributes" type="collection">
+			<parameter key="alias">DoctrineDelegator</parameter>
+			<parameter key="class">Rock\OnSymfony\HttpPageFlowBundle\Delegate\DoctrineDelegator</parameter>
+		</parameter>
+	</parameters>
+
+    <services>
+        <!-- Delegator Definitions -->
+        <service 
+			id="rock.page_flow.definition.delegator.doctrine" 
+			class="%rock.definition.state_delegate.class%"
+		>
+		    <argument>delegator.doctrine</argument>
+		    <argument>%rock.page_flow.delegator.doctrine.attributes%</argument>
+		    <tag name="rock.page_flow.definition"/>
+		</service>
+	</services>
+</container>
