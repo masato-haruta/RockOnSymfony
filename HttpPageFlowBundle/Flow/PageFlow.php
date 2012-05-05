@@ -134,9 +134,8 @@ class PageFlow extends BaseFlow
 	 */
 	protected function doInit(ITraversalState $traversal)
 	{
-		$this->dispatch(PageFlowEvents::onFlow('init'), new HandleFlowWithTraversalEvent($this, $traversal));
-
 		parent::doInit($traversal);
+		$this->dispatch(PageFlowEvents::onFlow('init'), new HandleFlowWithTraversalEvent($this, $traversal));
 	}
 	
 	/**
@@ -144,8 +143,9 @@ class PageFlow extends BaseFlow
 	 */
 	protected function doInitPath()
 	{
-		$this->dispatch(PageFlowEvents::onFlow('init_path'), new HandleFlowEvent($this));
 		parent::doInitPath();
+
+		$this->dispatch(PageFlowEvents::onFlow('init_path'), new HandleFlowEvent($this));
 	}
 	/**
 	 * 
@@ -153,6 +153,7 @@ class PageFlow extends BaseFlow
 	protected function doShutdown(ITraversalState $traversal)
 	{
 		parent::doShutdown($traversal);
+		//
 		$this->dispatch(PageFlowEvents::onFlow('shutdown'), new HandleFlowWithTraversalEvent($this, $traversal));
 	}
 
