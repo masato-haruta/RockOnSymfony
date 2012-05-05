@@ -75,6 +75,11 @@ class FormFlow extends AbstractFormFlow
 	 */
 	public function doSave()
 	{
+		$form  = $this->getForm();
+		$data  = $form->getData();
+
+		// save the data
+		//throw new \Exception('You need to override doSave, or use @FlowDelegate("save").');
 	}
 	/**
 	 *

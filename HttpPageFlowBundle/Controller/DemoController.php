@@ -38,19 +38,6 @@ class DemoController extends Controller
 		$this->get('session')->remove('rock.page_flow');
 		return new RedirectResponse('default_index');
 	}
-
-    /**
-     * @Route("/index", name="rock_demo_default")
-     * @Route("/index/{state}", name="rock_demo_default_state")
-     * @Template()
-	 * @Flow("Default", route="rock_demo_default_state", directionOnRoute="direction", stateOnRoute="state", cleanUrl=true)
-	 * @FlowHandler("onFlowInit", method="onInitIndexFlow")
-	 * @FlowHandler("onPageFirst", method="onIndexFirst")
-     */
-    public function indexAction()
-    {
-        return array('name' => 'default');
-    }
 	
     /**
      * @Route("/test", name="rock_demo_test")
@@ -73,6 +60,7 @@ class DemoController extends Controller
      */
 	public function formAction()
 	{
+		// Do Any action for all page in flow 
 		return array();
 	}
 
@@ -82,16 +70,29 @@ class DemoController extends Controller
 		
 		$formData   = $output->get('form');
 		
-		$formData['sample'] = 'Filtered Value : '.$formData['sample'];
+		$formData['sample'] = 'Confirm Filter["'.$formData['sample'].'"]';
 		$output->set('form', $formData);
 	}
+
+    /**
+     * @Route("/index", name="rock_demo_default")
+     * @Route("/index/{state}", name="rock_demo_default_state")
+     * @Template()
+	 * @Flow("Default", route="rock_demo_default_state", directionOnRoute="direction", stateOnRoute="state", cleanUrl=true)
+	 * @FlowHandler("onFlowInit", method="onInitIndexFlow")
+	 * @FlowHandler("onPageFirst", method="onIndexFirst")
+     */
+    public function indexAction()
+    {
+        return array('name' => 'default');
+    }
 
 	/**
 	 * Sample Code of Lazy Insertion of Flow-Page
 	 */
 	public function onInitIndexFlow(IPageFlowEvent $event)
 	{
-		// Add Stp into Flow
+		// Add Step into Flow
 		$flow = $event->getFlow();
 		$path = $flow->getPath();
 		$path->addVertex($first = new Page($path, 'first'));

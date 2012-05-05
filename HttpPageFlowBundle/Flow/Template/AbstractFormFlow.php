@@ -81,6 +81,8 @@ abstract class AbstractFormFlow extends PageFlow
 	{
 		$this->formData  = $data;
 
+		if(!($session = $this->getSession()))
+			throw new \Exception('Session is not specified on Execution.');
 		$this->getSession()->set('form_data', $data);
 	}
 
