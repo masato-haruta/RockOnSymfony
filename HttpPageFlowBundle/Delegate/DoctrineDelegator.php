@@ -24,6 +24,9 @@ use Rock\OnSymfony\HttpPageFlowBundle\Aware\IContainerAware;
 use Rock\Component\Flow\Input\IInput;
 // @use Symfony Container
 use Symfony\Component\DependencyInjection\ContainerInterface;
+// @use Supported Flow BaseClass
+use Rock\OnSymfony\HttpPageFlowBundle\Flow\Template\AbstractDeleteFlow;
+use Rock\OnSymfony\HttpPageFlowBundle\Flow\Template\AbstractFormFlow;
 
 /**
  *
@@ -73,11 +76,14 @@ class DoctrineDelegator extends AbstractStateDelegator
 		$em      = $this->getEntityManager();
 		$invoker = $this->getInvoker();
 
-		// 
-		$form    = $invoker->getFlow()->getForm();
-		$data    = $form->getData();
-		$em->persist($data);
-		$em->flush();
+		if($invoker instanceof AbstractFormFlow)
+		{
+			// 
+			$form    = $invoker->getFlow()->getForm();
+			$data    = $form->getData();
+			$em->persist($data);
+			$em->flush();
+		}
 	}
 	/**
 	 *
@@ -87,10 +93,14 @@ class DoctrineDelegator extends AbstractStateDelegator
 		$em      = $this->getEntityManager();
 		$invoker = $this->getInvoker();
 
-		// 
-		$data    = $form->getData();
-		$em->remove($data);
-		$em->flush();
+		if($invoker instanceof AbstractDeleteFlow)
+		{
+			// 
+			$data    = $invoker->getData();
+
+			$em->remove($data);
+			$em->flush();
+		}
 	}
 }
 
