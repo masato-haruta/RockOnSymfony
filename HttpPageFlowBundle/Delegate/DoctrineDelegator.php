@@ -69,10 +69,24 @@ class DoctrineDelegator extends AbstractStateDelegator
 		return $this->container->get($this->ems[$name]);
 	}
 
+	protected function doUpdate(IInput $input)
+	{
+		$em      = $this->getEntityManager();
+		$invoker = $this->getInvoker();
+
+		if($invoker instanceof AbstractFormFlow)
+		{
+			// 
+			$form    = $invoker->getFlow()->getForm();
+			$data    = $form->getData();
+			$em->merge($data);
+			$em->flush();
+		}
+	}
 	/**
 	 *
 	 */
-	protected function doSave(IInput $input)
+	protected function doInsert(IInput $input)
 	{
 		$em      = $this->getEntityManager();
 		$invoker = $this->getInvoker();
@@ -98,7 +112,8 @@ class DoctrineDelegator extends AbstractStateDelegator
 		{
 			// 
 			$data    = $invoker->getFlow()->getData();
-
+			
+			//
 			$em->remove($data);
 			$em->flush();
 		}

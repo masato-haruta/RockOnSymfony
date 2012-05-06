@@ -85,7 +85,7 @@ class DemoController extends Controller
 	 * @FlowVars({"form_type_type"="class", "form_type"="Rock\OnSymfony\HttpPageFlowBundle\Tests\Form\TestFormType"})
 	 * @FlowHandler("onPageConfirmFilterOutput")
 	 * @FlowHandler("onStateInit", method="onStateInitForForm")
-	 * @FlowDelegate("save", delegator="TestDelegator", method="doSave", vars={"EntityManager"="default"})
+	 * @FlowDelegate("save", delegator="TestDelegator", method="doInsert", vars={"EntityManager"="default"})
      */
 	public function formAction()
 	{

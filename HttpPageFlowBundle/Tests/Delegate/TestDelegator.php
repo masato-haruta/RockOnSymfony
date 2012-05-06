@@ -59,11 +59,20 @@ class TestDelegator extends AbstractStateDelegator
 	/**
 	 *
 	 */
-	protected function doSave(IInput $input)
+	protected function doInsert(IInput $input)
 	{
 		// 
 		if($this->logger)
-			$this->logger->info(sprintf('Saved with %s', $this->getParameterBag()));
+			$this->logger->info(sprintf('Inserted with %s', $this->getParameterBag()));
+	}
+	/**
+	 *
+	 */
+	protected function doUpdate(IInput $input)
+	{
+		// 
+		if($this->logger)
+			$this->logger->info(sprintf('Updated with %s', $this->getParameterBag()));
 	}
 }
 
