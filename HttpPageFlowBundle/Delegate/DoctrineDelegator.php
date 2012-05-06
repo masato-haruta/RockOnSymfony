@@ -97,7 +97,7 @@ class DoctrineDelegator extends AbstractStateDelegator
 		if($invoker instanceof AbstractDeleteFlow)
 		{
 			// 
-			$data    = $invoker->getData();
+			$data    = $invoker->getFlow()->getData();
 
 			$em->remove($data);
 			$em->flush();

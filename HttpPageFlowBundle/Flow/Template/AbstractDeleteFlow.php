@@ -36,6 +36,9 @@ abstract class AbstractDeleteFlow extends PageFlow
 	public function setData($data)
 	{
 		$this->data = $data;
+
+		if($this->isAllocateOutput())
+			$this->getSession()->set('delete_data', $data);
 	}
 
 	/**
@@ -44,7 +47,10 @@ abstract class AbstractDeleteFlow extends PageFlow
 	 */
 	public function getData()
 	{
+		if(!$this->data && $this->isAllocateOutput())
+		{
+			$this->data = $this->getSession()->get('delete_data', null);
+		}
 		return $this->data;
 	}
-
 }

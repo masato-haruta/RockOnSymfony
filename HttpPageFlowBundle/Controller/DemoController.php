@@ -39,6 +39,16 @@ class DemoController extends Controller
 		$this->get('session')->remove('rock.page_flow');
 		return new RedirectResponse('default_index');
 	}
+	/**
+	 * @Route("/partial", name="rock_demo_pertial")
+	 * @Route("/pertial/{state}", name="rock_demo_pertial_state")
+	 * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:test/{state}.html.twig")
+	 * @Flow("Demo", route="rock_demo_test_state", directionOnRoute="direction", stateOnRoute="state", cleanUrl=true)
+	 */
+	public function testAction()
+	{
+		return array('name' => 'default');
+	}
 	
     /**
      * @Route("/test", name="rock_demo_test")
