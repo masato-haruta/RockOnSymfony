@@ -46,6 +46,7 @@ class DeleteFlow extends AbstractDeleteFlow
 	 */
 	public function doConfirm(IInput $input)
 	{
+		$this->set('data', $this->getData());
 	}
 
 	/**
@@ -71,6 +72,7 @@ class DeleteFlow extends AbstractDeleteFlow
 	 */
 	public function doComplete(IInput $event)
 	{
+		$this->set('data', $this->getData());
 	}
 }
 
