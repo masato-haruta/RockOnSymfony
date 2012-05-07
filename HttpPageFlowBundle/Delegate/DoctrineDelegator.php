@@ -27,7 +27,7 @@ use Rock\Component\Flow\Input\IInput;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 // @use Supported Flow BaseClass
 use Rock\OnSymfony\HttpPageFlowBundle\Flow\Template\AbstractDeleteFlow;
-use Rock\OnSymfony\HttpPageFlowBundle\Flow\Template\AbstractFormFlow;
+use Rock\OnSymfony\HttpPageFlowBundle\Flow\Template\AbstractFlow\AbstractFormFlow;
 
 /**
  *
@@ -69,20 +69,6 @@ class DoctrineDelegator extends AbstractStateDelegator
 		return $this->container->get($this->ems[$name]);
 	}
 
-	protected function doUpdate(IInput $input)
-	{
-		$em      = $this->getEntityManager();
-		$invoker = $this->getInvoker();
-
-		if($invoker instanceof AbstractFormFlow)
-		{
-			// 
-			$form    = $invoker->getFlow()->getForm();
-			$data    = $form->getData();
-			$em->merge($data);
-			$em->flush();
-		}
-	}
 	/**
 	 *
 	 */
@@ -90,8 +76,9 @@ class DoctrineDelegator extends AbstractStateDelegator
 	{
 		$em      = $this->getEntityManager();
 		$invoker = $this->getInvoker();
+		$flow    = $invoker->getFlow();
 
-		if($invoker instanceof AbstractFormFlow)
+		if($flow instanceof AbstractFormFlow)
 		{
 			// 
 			$form    = $invoker->getFlow()->getForm();
@@ -103,12 +90,31 @@ class DoctrineDelegator extends AbstractStateDelegator
 	/**
 	 *
 	 */
+	protected function doUpdate(IInput $input)
+	{
+		$em      = $this->getEntityManager();
+		$invoker = $this->getInvoker();
+		$flow    = $invoker->getFlow();
+
+		if($flow instanceof AbstractFormFlow)
+		{
+			// 
+			$form    = $invoker->getFlow()->getForm();
+			$data    = $form->getData();
+			$em->merge($data);
+			$em->flush();
+		}
+	}
+	/**
+	 *
+	 */
 	protected function doDelete(IInput $input)
 	{
 		$em      = $this->getEntityManager();
 		$invoker = $this->getInvoker();
+		$flow    = $invoker->getFlow();
 
-		if($invoker instanceof AbstractDeleteFlow)
+		if($flow instanceof AbstractDeleteFlow)
 		{
 			// 
 			$data    = $invoker->getFlow()->getData();
