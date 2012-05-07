@@ -16,6 +16,8 @@
  ****/
 // @namespace
 namespace Rock\OnSymfony\HttpPageFlowBundle\Flow\Template;
+// @extends
+use Rock\OnSymfony\HttpPageFlowBundle\Flow\Template\AbstractFlow\AbstractDeleteFlow;
 // @use Event
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;
 use Rock\Component\Flow\Input\IInput;

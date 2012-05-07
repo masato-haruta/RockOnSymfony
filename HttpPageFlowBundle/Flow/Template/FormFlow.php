@@ -16,6 +16,8 @@
  ****/
 // @namespace
 namespace Rock\OnSymfony\HttpPageFlowBundle\Flow\Template;
+// @extends
+use Rock\OnSymfony\HttpPageFlowBundle\Flow\Template\AbstractFlow\AbstractFormFlow;
 
 // <Use> : Event
 use Rock\OnSymfony\HttpPageFlowBundle\Event\IPageEvent;

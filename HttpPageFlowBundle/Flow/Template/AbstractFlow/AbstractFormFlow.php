@@ -16,7 +16,7 @@
  ****/
 
 // <Namespace>
-namespace Rock\OnSymfony\HttpPageFlowBundle\Flow\Template;
+namespace Rock\OnSymfony\HttpPageFlowBundle\Flow\Template\AbstractFlow;
 // @extends
 use Rock\OnSymfony\HttpPageFlowBundle\Flow\PageFlow;
 // @use Form Factory
