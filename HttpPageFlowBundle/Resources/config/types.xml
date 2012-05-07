@@ -8,49 +8,38 @@
 		<!-- Type Default -->
 		<parameter key="rock.page_flow.template.default.class">Rock\OnSymfony\HttpPageFlowBundle\Type\DefaultType</parameter>
 		<!-- Type Form -->
-		<parameter key="rock.page_flow.template.form.new.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormNewType</parameter>
+		<parameter key="rock.page_flow.template.form.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormType</parameter>
 		<parameter key="rock.page_flow.template.form.edit.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormEditType</parameter>
 		<!-- Type FormConfirm -->
-		<parameter key="rock.page_flow.template.form.confirm.new.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormConfirmNewType</parameter>
+		<parameter key="rock.page_flow.template.form.confirm.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormConfirmType</parameter>
 		<parameter key="rock.page_flow.template.form.confirm.edit.class">Rock\OnSymfony\HttpPageFlowBundle\Type\FormConfirmEditType</parameter>
 		<!-- Delete -->
 		<parameter key="rock.page_flow.template.delete.class">Rock\OnSymfony\HttpPageFlowBundle\Type\DeleteType</parameter>
 	</parameters>
 
     <services>
-        <!-- Type Default -->
+        <!-- Type for Default -->
         <service 
 			id="rock.page_flow.template.default" 
 			class="%rock.page_flow.template.default.class%"
 		>
 		    <tag name="rock.page_flow.definition"/>
 		</service>
-        <!-- Type Form -->
+        <!-- Type for Form -->
         <service 
-			id="rock.page_flow.template.form.new" 
-			class="%rock.page_flow.template.form.new.class%"
+			id="rock.page_flow.template.form" 
+			class="%rock.page_flow.template.form.class%"
 		>
 		    <tag name="rock.page_flow.definition"/>
 		</service>
+        <!-- Type for Form Confirm -->
         <service 
-			id="rock.page_flow.template.form.edit" 
-			class="%rock.page_flow.template.form.edit.class%"
+			id="rock.page_flow.template.form.confirm" 
+			class="%rock.page_flow.template.form.confirm.class%"
 		>
 		    <tag name="rock.page_flow.definition"/>
 		</service>
-        <!-- Type Form -->
-        <service 
-			id="rock.page_flow.template.form.confirm.new" 
-			class="%rock.page_flow.template.form.confirm.new.class%"
-		>
-		    <tag name="rock.page_flow.definition"/>
-		</service>
-        <service 
-			id="rock.page_flow.template.form.cofnirm.edit" 
-			class="%rock.page_flow.template.form.confirm.edit.class%"
-		>
-		    <tag name="rock.page_flow.definition"/>
-		</service>
+		<!-- Type for Delete -->
         <service 
 			id="rock.page_flow.template.delete"
 			class="%rock.page_flow.template.delete.class%"

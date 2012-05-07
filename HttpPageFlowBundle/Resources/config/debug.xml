@@ -32,7 +32,7 @@
 			id="rock.page_flow.template.demo" 
 			class="Rock\OnSymfony\HttpPageFlowBundle\Type\DemoType"
 		>
-		    <tag name="rock.page_flow.type"/>
+		    <tag name="rock.page_flow.definition"/>
 		</service>
 
         <service 
