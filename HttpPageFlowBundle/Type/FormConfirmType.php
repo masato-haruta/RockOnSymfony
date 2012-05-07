@@ -18,20 +18,20 @@
 // @namespace
 namespace Rock\OnSymfony\HttpPageFlowBundle\Type;
 // @extends
-use Rock\OnSymfony\HttpPageFlowBundle\Type\AbstractFormType;
+use Rock\OnSymfony\HttpPageFlowBundle\Type\AbstractFormConfirmType;
 
 /**
  *
  */
-class FormEditType extends AbstractFormType
+class FormConfirmType extends AbstractFormConfirmType
 {
 	/**
 	 *
 	 */
 	public function __construct()
 	{
-		parent::__construct('rock.form.template.form.edit');
+		parent::__construct('rock.form.template.form.confirm');
 
-		$this->setAlias('FormEdit');
+		$this->setAlias('FormConfirm');
 	}
 }

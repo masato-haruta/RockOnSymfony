@@ -37,7 +37,8 @@ class DemoType extends BaseType
 	{
 		parent::__construct('rock.flow.template.demo');
 		
-		$this->setAttribute('alias', 'Demo');
+		//$this->setAttribute('alias', 'Demo');
+		$this->setAlias('Demo');
 	}
 
 	protected function configure()
