@@ -1,4 +1,4 @@
-_default:
+_demo:
   resource:  "@RockOnSymfonyHttpPageFlowBundle/Controller/DemoController.php"
   type:      annotation
   prefix:    /demo
