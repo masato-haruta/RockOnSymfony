@@ -36,7 +36,11 @@ use Rock\Component\Flow\Input\IInput as IFlowInput;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
+ * Conceptual Demo CRUD with PageFlow
  *
+ * CAUTION:
+ *   This Controller is not worked proper.
+ *  
  */
 class DemoCrudController extends Controller
 {
