@@ -32,7 +32,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class DemoController extends Controller
 {
 	/**
-	 * @Route("clear", name="rock_clear_sess")
+	 * @Route("clear", name="_clear")
 	 */
 	public function clearAction()
 	{
@@ -40,7 +40,7 @@ class DemoController extends Controller
 		return new RedirectResponse('default_index');
 	}
 	/**
-	 * @Route("/partial", name="rock_demo_pertial")
+	 * @Route("/partial", name="_partial")
 	 * @Route("/pertial/{state}", name="rock_demo_pertial_state")
 	 * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:test/{state}.html.twig")
 	 * @Flow("Default", route="rock_demo_test_state", directionOnRoute="direction", stateOnRoute="state", cleanUrl=true)
@@ -51,7 +51,7 @@ class DemoController extends Controller
 	}
 	
     /**
-     * @Route("/basic", name="rock_flow_demo_basic")
+     * @Route("/basic", name="_basic")
      * @Route("/basic/{state}", name="rock_flow_demo_basic_state")
      * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:basic/{state}.html.twig")
 	 * @Flow("Demo", route="rock_demo_basic_state", directionOnRoute="direction", stateOnRoute="state", cleanUrl=true)
