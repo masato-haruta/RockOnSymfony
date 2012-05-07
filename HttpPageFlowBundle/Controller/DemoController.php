@@ -51,12 +51,12 @@ class DemoController extends Controller
 	}
 	
     /**
-     * @Route("/test", name="rock_demo_test")
-     * @Route("/test/{state}", name="rock_demo_test_state")
-     * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:test/{state}.html.twig")
-	 * @Flow("Demo", route="rock_demo_test_state", directionOnRoute="direction", stateOnRoute="state", cleanUrl=true)
+     * @Route("/basic", name="rock_flow_demo_basic")
+     * @Route("/basic/{state}", name="rock_flow_demo_basic_state")
+     * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:basic/{state}.html.twig")
+	 * @Flow("Demo", route="rock_demo_basic_state", directionOnRoute="direction", stateOnRoute="state", cleanUrl=true)
      */
-    public function testAction()
+    public function basicAction()
     {
         return array('name' => 'default');
     }
