@@ -43,9 +43,9 @@ class DemoController extends Controller
 	 * @Route("/partial", name="rock_demo_pertial")
 	 * @Route("/pertial/{state}", name="rock_demo_pertial_state")
 	 * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:test/{state}.html.twig")
-	 * @Flow("Demo", route="rock_demo_test_state", directionOnRoute="direction", stateOnRoute="state", cleanUrl=true)
+	 * @Flow("Default", route="rock_demo_test_state", directionOnRoute="direction", stateOnRoute="state", cleanUrl=true)
 	 */
-	public function testAction()
+	public function partialAction()
 	{
 		return array('name' => 'default');
 	}
@@ -81,7 +81,7 @@ class DemoController extends Controller
      * @Route("/form", name="rock_demo_default_form")
      * @Route("/form/{state}", name="rock_demo_default_form_state")
      * @Template("RockOnSymfonyHttpPageFlowBundle:Demo:form/{state}.html.twig")
-	 * @Flow("FormConfirmNew", route="rock_demo_default_form_state", method="post")
+	 * @Flow("FormConfirm", route="rock_demo_default_form_state", method="post")
 	 * @FlowVars({"form_type_type"="class", "form_type"="Rock\OnSymfony\HttpPageFlowBundle\Tests\Form\TestFormType"})
 	 * @FlowHandler("onPageConfirmFilterOutput")
 	 * @FlowHandler("onStateInit", method="onStateInitForForm")
