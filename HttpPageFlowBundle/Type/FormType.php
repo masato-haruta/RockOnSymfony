@@ -18,7 +18,7 @@
 // @namespace
 namespace Rock\OnSymfony\HttpPageFlowBundle\Type;
 // @extends
-use Rock\OnSymfony\HttpPageFlowBundle\Type\AbstractFormType;
+use Rock\OnSymfony\HttpPageFlowBundle\Type\AbstractType\AbstractFormType;
 
 /**
  *

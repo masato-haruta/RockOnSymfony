@@ -16,30 +16,36 @@
  ****/
 
 // @namespace
-namespace Rock\OnSymfony\HttpPageFlowBundle\Type;
+namespace Rock\OnSymfony\HttpPageFlowBundle\Type\AbstractType;
 // @extends
-use Rock\OnSymfony\HttpPageFlowBundle\Type\AbstractFormType;
+use Rock\OnSymfony\HttpPageFlowBundle\Type\BaseType;
 
-abstract class AbstractFormConfirmType extends AbstractFormType
+/**
+ *
+ */
+abstract class AbstractFormType extends BaseType 
 {
+	/**
+	 *
+	 */
 	public function __construct($id)
 	{
 		parent::__construct($id);
 
-		$this->class  = '\\Rock\OnSymfony\\HttpPageFlowBundle\\Flow\\Template\\FormConfirmFlow';
+		$this->class = '\\Rock\\OnSymfony\\HttpPageFlowBundle\\Flow\\Template\\FormFlow';
 	}
-
+	/**
+	 *
+	 */
 	protected function configure()
 	{
 		// Definine Page Flow
 		$this
 		    ->addState('init', array($this->getReference(), 'doInitializeForm'))
 			->addPage('input', array($this->getReference(), 'doInput'))
-			->addCondition(array($this->getReference(), 'doValidateInput'))
-			->addPage('confirm', array($this->getReference(), 'doConfirm'))
-			->addCondition(array($this->getReference(), 'doValidateSession'))
+			->addCondition(array($this->getReference(),'doValidateInput'))
 			->addState('save', array($this->getReference(), 'doSave'))
-			->addPage('complete', array($this->getReference(), 'doComplete'));
-			
+			->addPage('complete', array($this->getReference(), 'doComplete'))
+		;
 	}
 }
